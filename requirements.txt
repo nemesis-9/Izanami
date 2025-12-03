@@ -1,0 +1,6 @@
+mesa
+pandas
+matplotlib
+seaborn
+networkx
+jupyter
