@@ -4,7 +4,7 @@ from mesa import Agent
 class BaseAgent(Agent):
     def __init__(self, model, wealth):
         super().__init__(model)
-        self.age = 0
+        self.age = 20
         self.wealth = wealth
         self.alive = True
         self.location = None
