@@ -8,7 +8,7 @@ class Trader(BaseAgent):
         self.inventory = {"food": 0}
         self.max_inventory = 30
         self.buying_power = 10          # Max units of goods they can try to buy
-        self.buying_aggression = 0.8    # Buy if the current price is 80% or less of base price
+        self.buying_aggression = 0.95    # Buy if the current price is 80% or less of base price
 
         self.path = None
         self.destination = None

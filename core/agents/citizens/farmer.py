@@ -10,8 +10,8 @@ class Farmer(BaseAgent):
         self.has_farm_plot = True
         self.path = None
 
-        self.surplus_threshold = 10      # Food amount needed for market trip
-        self.survival_buffer = 10       # Minimum food to keep after selling
+        self.surplus_threshold = 5     # Food amount needed for market trip
+        self.survival_buffer = 15       # Minimum food to keep after selling
 
         self.home_location = None
         self.destination = None
