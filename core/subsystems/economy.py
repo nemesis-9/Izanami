@@ -19,7 +19,7 @@ class Economy:
         else:
             self.resource_pools[resource_name] = amount
 
-    def request_resources(self, resource_name, amount):
+    def request_resource(self, resource_name, amount):
         if resource_name not in self.resource_pools or self.resource_pools[resource_name] <= 0:
             return 0
 
