@@ -3,45 +3,58 @@ from core.agents.agent import BaseAgent
 
 class Farmer(BaseAgent):
     def __init__(self, model, wealth):
-        self.agent_type = "Farmer"
-        super().__init__(model, wealth)
+        super().__init__(model, wealth, "Farmer")
 
         self.food_production_rate = self.random.randrange(3,7)
-        self.food_consumption_rate = 2
+
         self.has_farm_plot = True
         self.path = None
 
-    def produce(self):
-        production_amount = self.food_production_rate
-        current_price = self.model.economy.calculate_price("food")
-        self.model.economy.add_resource("food", production_amount)
-        income = production_amount * current_price
-        self.wealth += income
+        self.goods_to_sell = 0
+        self.selling_threshold = 10
 
-    def consume(self):
-        food_needed = self.food_consumption_rate
-        food_gained = self.model.economy.request_resource("food", food_needed)
-
-        if food_gained < food_needed:
-            self.alive = False
-            self.model.grid.remove_agent(self)
-            print(f"Farmer {self.unique_id} starved to death")
-            return False
-        return True
+        self.home_location = None
+        self.destination = None
 
     def move(self):
         current_pos = self.pos
-        destination_pos = self.model.city_network.points_of_interest["market"]
-        return self.execute_pathfinding_move(current_pos, destination_pos)
+        market = self.model.city_network.points_of_interest["market"]
+
+        if self.goods_to_sell > self.selling_threshold:
+            self.destination = market
+        elif self.pos == market:
+            self.destination = self.home_location
+        else:
+            self.destination = self.home_location
+
+        if self.destination and self.destination != current_pos:
+            return self.execute_pathfinding_move(current_pos, self.destination)
+        return False
+
+    def produce(self):
+        production_amount = self.food_production_rate
+        self.goods_to_sell += production_amount
+
+    def sell(self):
+        if self.goods_to_sell > 0:
+            current_price = self.model.economy.calculate_price("food")
+            income = current_price * self.goods_to_sell
+            self.model.economy.add_resource("food", self.goods_to_sell)
+            self.wealth += income
+            self.goods_to_sell = 0
 
     def step(self):
         if not self.alive:
             return
 
-        self.move()
+        self.consume()
 
-        if self.path is None or len(self.path) <= 1:
-            self.produce()
-            self.consume()
+        is_moving = self.move()
+
+        if not is_moving:
+            if self.pos == self.home_location:
+                self.produce()
+            elif self.pos == self.model.city_network.points_of_interest["market"]:
+                self.sell()
 
         super().step()

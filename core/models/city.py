@@ -42,6 +42,7 @@ class CityModel(Model):
             y = self.random.randrange(self.grid.height)
             self.grid.place_agent(agent, (x, y))
             agent.location = (x, y)
+            agent.home_location = (x, y)
 
     def step(self):
         self.economy.step()
