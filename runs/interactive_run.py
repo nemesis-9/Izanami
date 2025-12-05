@@ -4,7 +4,7 @@ import pandas as pd
 from core.models.world import WorldModel
 from core.models.city import CityModel
 
-CURRENT_PHASE = 4
+CURRENT_PHASE = 5
 
 MODEL_REPORTERS = {
     "TotalAgents": lambda m: len(m.agents),
@@ -39,7 +39,7 @@ if __name__ == '__main__':
     )
     world.city_models.append(city_instance)
 
-    for i in range(10):
+    for i in range(50):
         print(f"\nWorld Step {world.steps + 1}:")
         world.step()
 

@@ -42,7 +42,7 @@ class BaseAgent(Agent):
 
             if food_gained < food_to_request:
                 self.alive = False
-                print(f"{self.agent_type} {self.unique_id} starved to death")
+                print(f"{self.agent_type} {self.unique_id} starved to death.")
                 return False
 
             self.personal_food_supply = 0
@@ -50,4 +50,6 @@ class BaseAgent(Agent):
 
     def step(self):
         self.age += 1
+        if not self.consume():
+            return
         pass

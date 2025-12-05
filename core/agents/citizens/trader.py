@@ -15,7 +15,7 @@ class Trader(BaseAgent):
 
     def move(self):
         current_pos = self.pos
-        city_center = self.model.city_network.points_of_interest["city_center"]
+        self.destination = self.model.city_network.points_of_interest["city_center"]
 
         return self.execute_pathfinding_move(current_pos, self.destination)
 

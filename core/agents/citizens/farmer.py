@@ -10,8 +10,8 @@ class Farmer(BaseAgent):
         self.has_farm_plot = True
         self.path = None
 
-        self.goods_to_sell = 0
-        self.selling_threshold = 10
+        self.surplus_threshold = 10      # Food amount needed for market trip
+        self.survival_buffer = 10       # Minimum food to keep after selling
 
         self.home_location = None
         self.destination = None
@@ -20,7 +20,7 @@ class Farmer(BaseAgent):
         current_pos = self.pos
         market = self.model.city_network.points_of_interest["market"]
 
-        if self.goods_to_sell > self.selling_threshold:
+        if self.personal_food_supply > self.surplus_threshold:
             self.destination = market
         elif self.pos == market:
             self.destination = self.home_location
@@ -33,21 +33,20 @@ class Farmer(BaseAgent):
 
     def produce(self):
         production_amount = self.food_production_rate
-        self.goods_to_sell += production_amount
+        self.personal_food_supply += production_amount
 
     def sell(self):
-        if self.goods_to_sell > 0:
+        surplus = self.personal_food_supply - self.survival_buffer
+        if surplus > 0:
             current_price = self.model.economy.calculate_price("food")
-            income = current_price * self.goods_to_sell
-            self.model.economy.add_resource("food", self.goods_to_sell)
+            income = current_price * surplus
+            self.model.economy.add_resource("food", surplus)
             self.wealth += income
-            self.goods_to_sell = 0
+            self.personal_food_supply = self.survival_buffer
 
     def step(self):
         if not self.alive:
             return
-
-        self.consume()
 
         is_moving = self.move()
 

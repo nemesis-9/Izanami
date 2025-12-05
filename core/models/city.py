@@ -50,7 +50,7 @@ class CityModel(Model):
 
         dead_agents = [a for a in self.agents if not a.alive]
         for agent in dead_agents:
-            self.remove(agent)
+            self.agents.remove(agent)
 
         self.datacollector.collect(self)
         print(f"  City Step {self.steps}: Food Pool = {self.economy.resource_pools.get('food')}")

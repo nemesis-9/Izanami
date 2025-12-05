@@ -3,7 +3,7 @@ class Economy:
         self.model = model
 
         self.resource_pools = {
-            "food": 50,
+            "food": 500,
             "materials": 100,
             "gold": 0,
         }
