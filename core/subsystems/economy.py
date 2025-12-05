@@ -9,9 +9,24 @@ class Economy:
         }
 
         self.prices = {
-            "food": 1.0,
-            "material": 2.0
+            "food": 2.0,
+            "material": 5.0,
+            "labour": 1.0,
         }
+
+        self.base_food_price = 2.0
+        self.price_elasticity = 0.005
+
+    def calculate_price(self, resource):
+        if resource == "food":
+            food_pool = self.resource_pools["food"]
+
+            # simple inverse relationship formula
+            new_price = self.base_food_price - (food_pool * self.price_elasticity)
+            # minimum threshold
+            self.prices["food"] = max(0.5, new_price)
+
+        return self.prices[resource]
 
     def add_resource(self, resource_name, amount):
         if resource_name in self.resource_pools:
@@ -28,4 +43,5 @@ class Economy:
         return actual_gained
 
     def step(self):
+        self.calculate_price("food")
         pass

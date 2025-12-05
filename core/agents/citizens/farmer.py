@@ -13,8 +13,10 @@ class Farmer(BaseAgent):
 
     def produce(self):
         production_amount = self.food_production_rate
+        current_price = self.model.economy.calculate_price("food")
         self.model.economy.add_resource("food", production_amount)
-        self.wealth += production_amount * 0.5
+        income = production_amount * current_price
+        self.wealth += income
 
     def consume(self):
         food_needed = self.food_consumption_rate

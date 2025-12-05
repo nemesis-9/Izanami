@@ -1,14 +1,16 @@
 import os
 import shutil
 import pandas as pd
-
 from core.models.world import WorldModel
 from core.models.city import CityModel
+
+CURRENT_PHASE = 4
 
 MODEL_REPORTERS = {
     "TotalAgents": lambda m: len(m.agents),
     "FoodPool": lambda m: m.economy.resource_pools.get("food", 0),
     "TotalWealth": lambda m: sum(a.wealth for a in m.agents),
+    "FoodPrice": lambda m: m.economy.prices.get("food", 0),
 }
 
 AGENT_REPORTERS = {
@@ -18,7 +20,6 @@ AGENT_REPORTERS = {
     "Age": lambda a: a.age,
     "Wealth": lambda a: a.wealth,
 }
-
 
 if __name__ == '__main__':
     print("--- Starting City Simulation Test ---")
@@ -32,6 +33,8 @@ if __name__ == '__main__':
         height=100,
         agents=10,
         farmers=15,
+        traders=5,
+        model_reporters=MODEL_REPORTERS,
         agent_reporters=AGENT_REPORTERS
     )
     world.city_models.append(city_instance)
@@ -42,34 +45,13 @@ if __name__ == '__main__':
 
     print("\n--- Simulation Test Complete ---")
 
-    output_dir = "../data/output/phase2"
+    output_dir = f"../data/output/phase{CURRENT_PHASE}"
     if os.path.exists(output_dir):
         print(f"Directory {output_dir} exists. Deleting and recreating for clean run.")
         shutil.rmtree(output_dir)
-
     os.makedirs(output_dir)
 
     model_data = city_instance.datacollector.get_model_vars_dataframe()
-    # agent_data = city_instance.datacollector.get_agent_vars_dataframe()
-
-    # agent data manual creation
-    # agent_table = city_instance.datacollector._agent_records
-    # records = []
-    # for step, agents_at_step in agent_table.items():
-    #     for agent_row in agents_at_step:
-    #         row = {"Step": step}
-    #         if isinstance(agent_row, dict):
-    #             row.update(agent_row)
-    #         elif hasattr(agent_row, "to_dict"):
-    #             row.update(agent_row.to_dict())
-    #         elif isinstance(agent_row, (list, tuple)):
-    #             row["AgentID"] = agent_row[0]
-    #         else:
-    #             raise TypeError(f"Unsupported agent_row type: {type(agent_row)}")
-    #         records.append(row)
-    # agent_data = pd.DataFrame.from_records(records)
-    # if not agent_data.empty:
-    #     agent_data = agent_data.set_index(['Step', 'AgentID'])
 
     AGENT_COLUMNS = list(AGENT_REPORTERS.keys())
     records = []

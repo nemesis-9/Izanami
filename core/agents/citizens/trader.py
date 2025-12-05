@@ -10,6 +10,7 @@ class Trader(BaseAgent):
         self.inventory = {"food": 0}
         self.path = None
 
+
     def move(self):
         current_pos = self.pos
         destination_pos = self.model.city_network.points_of_interest["city_center"]
@@ -17,7 +18,7 @@ class Trader(BaseAgent):
         return self.execute_pathfinding_move(current_pos, destination_pos)
 
     def trade(self):
-        if self.pos == self.destination:
+        if self.pos == self.model.city_network.points_of_interest["city_center"]:
             resource_to_buy = "food"
             amount_to_buy = 5
             price_per_unit = self.model.economy.calculate_price(resource_to_buy)
