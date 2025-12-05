@@ -14,6 +14,7 @@ class BaseAgent(Agent):
 
         self.food_consumption_rate = 1
         self.personal_food_supply = 20
+        self.travel_food_cost = 0.1
 
     def execute_pathfinding_move(self, current_pos, destination_pos):
         if current_pos == destination_pos:
@@ -26,10 +27,15 @@ class BaseAgent(Agent):
                 return False
 
         next_pos = self.path[1]
-        self.model.grid.move_agent(self, next_pos)
-        self.location = next_pos
-        self.path = self.path[1:]
-        return True
+
+        if self.personal_food_supply > self.travel_food_cost:
+            self.personal_food_supply -= self.travel_food_cost
+            self.model.grid.move_agent(self, next_pos)
+            self.location = next_pos
+            self.path = self.path[1:]
+            return True
+        else:
+            return False
 
     def consume(self):
         food_needed = self.food_consumption_rate
