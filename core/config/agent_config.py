@@ -22,12 +22,12 @@ def get_variables(var_type, season):
     required_variables = loaded_agent_variables[f"{var_type}_variables"]
     season_config = loaded_season_modifiers.get(season, {}).get("agent", {})
 
-    return {
-        key: value * season_config.get(key, 1.0)
-        for key, value in required_variables.items()
-        if isinstance(value, (int, float))
-    }
+    result = {}
 
+    for key, value in required_variables.items():
+        if isinstance(value, (int, float)):
+            result[key] = value * season_config.get(key, 1.0)
+        else:
+            result[key] = value
 
-print(loaded_season_modifiers)
-print(loaded_agent_variables)
+    return result
