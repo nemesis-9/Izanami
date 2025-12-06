@@ -1,18 +1,33 @@
-agent_config = {
-    "food_consumption_rate": 1,     # food consumption per time
-    "personal_food_supply": 20,     # initial food supply
-    "travel_food_cost": 0.1,
+import os
+import json
 
-    "replenishment_buffer": 5,      # Amount of additional food to buy
-}
+CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
+SEASON_MODIFIER_PATH = os.path.join(CURRENT_DIR, '..', '..', 'data', 'input', 'season_modifiers.json')
+AGENT_CONFIG_PATH = os.path.join(CURRENT_DIR, '..', '..', 'data', 'input', 'variables_agent.json')
 
-farmer_config = {
-    "surplus_threshold": 5,         # Food amount needed for market trip
-    "survival_buffer": 15,          # Minimum food to keep after selling
-}
+try:
+    with open(SEASON_MODIFIER_PATH, 'r') as f:
+        loaded_season_modifiers = json.load(f)
+except FileNotFoundError:
+    raise FileNotFoundError(f"Missing season modifiers: {SEASON_MODIFIER_PATH}")
 
-trader_config = {
-    "max_inventory": 30,
-    "buying_power": 10,             # Max units of goods they can try to buy
-    "buying_aggression": 0.95       # Buy if the current price is 95% or less of base price
-}
+try:
+    with open(AGENT_CONFIG_PATH, 'r') as f:
+        loaded_agent_variables = json.load(f)
+except FileNotFoundError:
+    raise FileNotFoundError(f"Missing agent variables: {AGENT_CONFIG_PATH}")
+
+
+def get_variables(var_type, season):
+    required_variables = loaded_agent_variables[f"{var_type}_variables"]
+    season_config = loaded_season_modifiers.get(season, {}).get("agent", {})
+
+    return {
+        key: value * season_config.get(key, 1.0)
+        for key, value in required_variables.items()
+        if isinstance(value, (int, float))
+    }
+
+
+print(loaded_season_modifiers)
+print(loaded_agent_variables)

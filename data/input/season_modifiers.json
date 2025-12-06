@@ -1,0 +1,81 @@
+{
+  "sprint":
+  {
+    "agent":
+    {
+      "food_consumption_rate": 1.0,
+      "travel_food_cost": 1.0,
+      "replenishment_buffer": 1.0
+    },
+
+    "economy":
+    {
+      "food":
+      {
+        "base_prices": 0.85,
+        "price_elasticities": 1.1,
+        "minimum_threshold": 1.0
+      }
+    }
+  },
+
+  "summer":
+  {
+    "agent":
+    {
+      "food_consumption_rate": 1.1,
+      "travel_food_cost": 1.1,
+      "replenishment_buffer": 1.0
+    },
+
+    "economy":
+    {
+      "food":
+      {
+        "base_prices": 1.0,
+        "price_elasticities": 1.0,
+        "minimum_threshold": 1.0
+      }
+    }
+  },
+
+  "autumn":
+  {
+    "agent":
+    {
+      "food_consumption_rate": 1.0,
+      "travel_food_cost": 0.9,
+      "replenishment_buffer": 1.3
+    },
+
+    "economy":
+    {
+      "food":
+      {
+        "base_prices": 0.9,
+        "price_elasticities": 0.9,
+        "minimum_threshold": 1.0
+      }
+    }
+  },
+
+  "winter":
+  {
+    "agent":
+    {
+      "food_consumption_rate": 1.25,
+      "travel_food_cost": 1.5,
+      "replenishment_buffer": 0.8
+    },
+
+    "economy":
+    {
+      "food":
+      {
+        "base_prices": 1.3,
+        "price_elasticities": 0.5,
+        "minimum_threshold": 1.0
+      }
+    }
+  }
+}

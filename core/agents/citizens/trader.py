@@ -1,58 +1,217 @@
 from core.agents.agent import BaseAgent
-from core.config.agent_config import trader_config
 
 
 class Trader(BaseAgent):
-    def __init__(self, model, wealth):
+    def __init__(self, model, wealth, initial_trader_config):
         super().__init__(model, wealth, "Trader")
 
         self.inventory = {"food": 0}
-        self.max_inventory = trader_config["max_inventory"]
-        self.buying_power = trader_config["buying_power"]
-        self.buying_aggression = trader_config["buying_aggression"]
 
         self.path = None
+
+        self.home_location = None
         self.destination = None
+        self.mode = 'selling'
+
+        self.max_inventory = initial_trader_config["max_inventory"]
+        self.buying_power = initial_trader_config["buying_power"]
+        self.buying_aggression = initial_trader_config["buying_aggression"]
+        self.selling_power = initial_trader_config["selling_power"]
+        self.selling_aggression = initial_trader_config["selling_aggression"]
+        self.inventory_margin = initial_trader_config["inventory_margin"]
+        self.wealth_margin = initial_trader_config["wealth_margin"]
+
+    def update_agent_config(self):
+        super().update_agent_config()
+        trader_vars = self.model.trader_variables
+        self.max_inventory = trader_vars["max_inventory"]
+        self.buying_power = trader_vars["buying_power"]
+        self.buying_aggression = trader_vars["buying_aggression"]
+        self.selling_power = trader_vars["selling_power"]
+        self.selling_aggression = trader_vars["selling_aggression"]
+        self.inventory_margin = trader_vars["inventory_margin"]
+        self.wealth_margin = trader_vars["wealth_margin"]
+
+    def toggle_mode(self):
+        if self.mode == 'selling':
+            self.mode = 'buying'
+        else:
+            self.mode = 'selling'
 
     def move(self):
         current_pos = self.pos
-        self.destination = self.model.city_network.points_of_interest["city_center"]
 
-        return self.execute_pathfinding_move(current_pos, self.destination)
+        city_center = self.model.city_network.points_of_interest["city_center"]
+        market = self.model.city_network.points_of_interest["market"]
 
-    def trade(self):
-        if self.pos == self.model.city_network.points_of_interest["city_center"]:
-            resource_to_buy = "food"
-            current_food_in_stock = self.inventory[resource_to_buy]
-            base_price = self.model.economy.base_food_price
-            price_per_unit = self.model.economy.calculate_price(resource_to_buy)
-
-            if current_food_in_stock >= self.max_inventory:
-                return
-            if price_per_unit >= base_price * self.buying_aggression:
-                return
-
-            amount_to_buy = min(
-                self.buying_power,
-                self.max_inventory - current_food_in_stock
-            )
-            if amount_to_buy <= 0:
-                return
-            total_cost = price_per_unit * amount_to_buy
-
-            if self.wealth >= total_cost:
-                food_gained = self.model.economy.request_resource(resource_to_buy, amount_to_buy)
-                if food_gained > 0:
-                    self.wealth -= total_cost
-                    self.model.economy.add_resource("gold", total_cost)
-                    self.inventory[resource_to_buy] += food_gained
+        if self.mode == 'selling':
+            selling_resources = self.need_to_sell()
+            if not selling_resources:
+                self.toggle_mode()
             else:
-                pass
+                self.destination = market
+
+        elif self.mode == 'buying':
+            buying_resources = self.need_to_buy()
+            if not buying_resources:
+                self.toggle_mode()
+            else:
+                self.destination = city_center
+
+        else:
+            self.destination = self.home_location
+
+        if self.destination and self.destination != self.pos:
+            return self.execute_pathfinding_move(current_pos, self.destination)
+        return False
+
+    def need_to_buy(self):
+        if self.wealth <= 0 or sum(self.inventory.values()) >= self.max_inventory:
+            return False
+
+        buying_resources = []
+        resources_available = [
+            resource
+            for resource, amount in self.model.economy.resource_pools.items()
+            if resource not in ["gold"] and amount >= 1
+        ]
+
+        if not resources_available:
+            return False
+
+        for resource in resources_available:
+            base_price = self.model.economy.base_price[resource]
+            current_price = self.model.economy.calculate_price(resource)
+            buying_price = base_price * self.buying_aggression
+            if current_price <= buying_price:
+                buying_resources.append(resource)
+
+        if not buying_resources:
+            return False
+        return buying_resources
+
+    def need_to_sell(self):
+        if sum(self.inventory.values()) <= 0:
+            return False
+
+        selling_resources = []
+        resource_available = [
+            resource
+            for resource, amount in self.inventory.items()
+            if resource not in ["gold"] and amount >= 1
+        ]
+
+        if not resource_available:
+            return False
+
+        for resource in resource_available:
+            base_price = self.model.economy.base_price[resource]
+            current_price = self.model.economy.calculate_price(resource)
+            selling_price = base_price * self.selling_aggression
+            if current_price >= selling_price:
+                selling_resources.append(resource)
+
+        if not selling_resources:
+            return False
+        return selling_resources
+
+    def buy_goods(self):
+        market = self.model.city_network.points_of_interest["market"]
+        market_goods = ["food"]
+
+        city_center = self.model.city_network.points_of_interest["city_center"]
+        city_center_goods = ["wood"]
+
+        buying_resources = self.need_to_buy()
+        if not buying_resources:
+            self.toggle_mode()
+            return
+
+        buy_candidates = []
+        for resource in buying_resources:
+            current_price = self.model.economy.calculate_price(resource)
+            buy_candidates.append((resource, current_price))
+        buy_candidates.sort(key=lambda x: x[1])
+
+        for resource, current_price in buy_candidates:
+            if self.wealth <= 0 or sum(self.inventory.values()) >= self.max_inventory:
+                break
+
+            if resource in market_goods and self.pos != market:
+                continue
+            elif resource in city_center_goods and self.pos != city_center:
+                continue
+
+            max_buy_by_power = int(self.buying_power / current_price) if current_price > 0 else 0
+            max_buy_by_wealth = int(self.wealth / current_price) if current_price > 0 else 0
+            max_buy_by_inventory = self.max_inventory - sum(self.inventory.values())
+
+            quantity = min(max_buy_by_power, max_buy_by_wealth, max_buy_by_inventory, self.buying_power[resource])
+
+            if quantity > 0:
+                buying_quantity = self.model.economy.request_resource(resource, quantity)
+                if buying_quantity > 0:
+                    cost = current_price * buying_quantity
+                    self.wealth -= cost
+                    self.model.economy.add_resource('gold', cost)
+                    self.inventory[resource] = self.inventory.get(resource, 0) + buying_quantity
+
+        if sum(self.inventory.values()) >= self.max_inventory * self.inventory_margin or self.wealth < self.wealth_margin:
+            self.toggle_mode()
+
+    def sell_goods(self):
+        market = self.model.city_network.points_of_interest["market"]
+        market_goods = ["food"]
+
+        city_center = self.model.city_network.points_of_interest["city_center"]
+        city_center_goods = ["wood"]
+
+        selling_resources = self.need_to_sell()
+        if not selling_resources:
+            self.toggle_mode()
+            return
+
+        sell_candidates = []
+        for resource in selling_resources:
+            current_price = self.model.economy.calculate_price(resource)
+            sell_candidates.append((resource, current_price))
+        sell_candidates.sort(key=lambda x: x[1], reverse=True)
+
+        for resource, current_price in sell_candidates:
+            if sum(self.inventory.values()) <= 0:
+                break
+
+            if resource in market_goods and self.pos != market:
+                continue
+            elif resource in city_center_goods and self.pos != city_center:
+                continue
+
+            quantity = min(self.inventory.get(resource, 0), self.selling_power[resource])
+
+            if quantity > 0:
+                selling_quantity = self.inventory[resource]
+                if selling_quantity > 0:
+                    income = current_price * selling_quantity
+                    self.wealth += income
+                    self.model.economy.request_resource('gold', income)
+                    self.inventory[resource] -= selling_quantity
+
+        if sum(self.inventory.values()) < self.max_inventory * self.inventory_margin:
+            self.toggle_mode()
 
     def step(self):
+        super().step()
         if not self.alive:
             return
-        self.move()
-        if self.path is None or len(self.path) <= 1:
-            self.trade()
-        super().step()
+
+        market = self.model.city_network.points_of_interest["market"]
+        city_center = self.model.city_network.points_of_interest["city_center"]
+
+        self.update_agent_config()
+        is_moving = self.move()
+
+        if not is_moving:
+            if self.pos == market:
+                self.buy_goods()
+            elif self.pos == city_center:
+                self.sell_goods()

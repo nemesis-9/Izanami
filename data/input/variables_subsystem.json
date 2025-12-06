@@ -1,0 +1,17 @@
+{
+  "economy":
+  {
+    "base_prices":
+    {
+      "food": 2.0
+    },
+
+    "price_elasticities": {
+      "food": 0.005
+    },
+
+    "minimum_threshold": {
+      "food": 0.5
+    }
+  }
+}

@@ -1,21 +1,26 @@
 from core.agents.agent import BaseAgent
-from core.config.agent_config import farmer_config
 
 
 class Farmer(BaseAgent):
-    def __init__(self, model, wealth):
+    def __init__(self, model, wealth, initial_farmer_config):
         super().__init__(model, wealth, "Farmer")
 
-        self.food_production_rate = self.random.randrange(3,7)
+        self.food_production_rate = self.random.randrange(3, 7)
 
         self.has_farm_plot = True
         self.path = None
 
-        self.surplus_threshold = farmer_config["surplus_threshold"]
-        self.survival_buffer = farmer_config["survival_buffer"]
+        self.surplus_threshold = initial_farmer_config["surplus_threshold"]
+        self.survival_buffer = initial_farmer_config["survival_buffer"]
 
         self.home_location = None
         self.destination = None
+
+    def update_agent_config(self):
+        super().update_agent_config()
+        farmer_vars = self.model.farmer_variables
+        self.surplus_threshold = farmer_vars["surplus_threshold"]
+        self.survival_buffer = farmer_vars["survival_buffer"]
 
     def move(self):
         current_pos = self.pos
@@ -46,9 +51,11 @@ class Farmer(BaseAgent):
             self.personal_food_supply = self.survival_buffer
 
     def step(self):
+        super().step()
         if not self.alive:
             return
 
+        self.update_agent_config()
         is_moving = self.move()
 
         if not is_moving:
@@ -57,4 +64,3 @@ class Farmer(BaseAgent):
             elif self.pos == self.model.city_network.points_of_interest["market"]:
                 self.sell()
 
-        super().step()

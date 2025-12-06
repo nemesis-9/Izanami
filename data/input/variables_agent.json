@@ -1,0 +1,33 @@
+{
+  "base_variables":
+  {
+      "food_consumption_rate": 1,
+      "personal_food_supply": 20,
+      "travel_food_cost": 0.1,
+  
+      "replenishment_buffer": 5
+  },
+  
+  "farmer_variables":
+  {
+      "surplus_threshold": 5,
+      "survival_buffer": 15
+  },
+  
+  "trader_variables":
+  {
+      "max_inventory": 30,
+      "buying_aggression": 0.95,
+      "selling_aggression": 1.05,
+      "inventory_margin": 0.9,
+      "wealth_margin": 10,
+      "buying_power":
+      {
+        "food": 10
+      },
+      "selling_power":
+      {
+        "food": 15
+      }
+  }
+}
