@@ -23,8 +23,6 @@ def get_subsystem_variables(season):
     base_economy_config = loaded_subsystem_variables["economy"].copy()
 
     economy_modifiers = loaded_season_modifiers.get(season, {}).get("economy", {})
-    # economy_modifiers = subsystem_modifiers.get("economy", {})
-    print(economy_modifiers)
 
     for section_name, resource_dict in base_economy_config.items():
         for resource_name, base_value in resource_dict.items():
@@ -32,12 +30,6 @@ def get_subsystem_variables(season):
             final_multiplier = resource_modifier_dict.get(section_name, 1.0)
 
             if isinstance(base_value, (int, float)):
-                base_economy_config[section_name][resource_name] = base_value * final_multiplier
+                base_economy_config[section_name][resource_name] = round(base_value * final_multiplier, 4)
 
     return base_economy_config
-
-
-print(get_subsystem_variables("sprint"))
-print(get_subsystem_variables("summer"))
-print(get_subsystem_variables("autumn"))
-print(get_subsystem_variables("winter"))

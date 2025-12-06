@@ -26,7 +26,7 @@ def get_variables(var_type, season):
 
     for key, value in required_variables.items():
         if isinstance(value, (int, float)):
-            result[key] = value * season_config.get(key, 1.0)
+            result[key] = round(value * season_config.get(key, 1.0), 4)
         else:
             result[key] = value
 
