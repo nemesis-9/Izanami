@@ -8,6 +8,7 @@ from core.spaces.city_network import CityNetwork
 from core.data_collectors.reporter_model import reporter_model
 from core.data_collectors.reporter_agent import reporter_agent
 from core.config.agent_config import get_variables
+from core.config.subsystem_config import get_subsystem_variables
 
 
 class CityModel(Model):
@@ -35,7 +36,8 @@ class CityModel(Model):
         self.farmer_variables = get_variables("farmer", self.current_season)
         self.trader_variables = get_variables("trader", self.current_season)
 
-        self.economy = Economy(self, resource_pools, price_pools)
+        economy_variables = get_subsystem_variables('economy', self.current_season)
+        self.economy = Economy(self, economy_variables)
 
         if model_reporters is None:
             model_reporters = reporter_model

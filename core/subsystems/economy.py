@@ -1,25 +1,14 @@
-from core.config.subsystem_config import economy_config
-
-
 class Economy:
-    def __init__(self, model, resource_pools, price_pools):
+    def __init__(self, model, economy_variables):
         self.model = model
 
-        self.resource_pools = {
-            "food": 500,
-            "materials": 100,
-            "gold": 0,
-        }
+        self.resource_pools = economy_variables.get("resource_pools", {})
 
-        self.price_pools = {
-            "food": 2.0,
-            "material": 5.0,
-            "labour": 1.0,
-        }
+        self.price_pools = economy_variables.get("price_pools", {})
 
-        self.base_prices = economy_config.get("base_prices", {})
-        self.price_elasticities = economy_config.get("price_elasticities", {})
-        self.minimum_threshold = economy_config.get("minimum_threshold", {})
+        self.base_prices = economy_variables.get("base_prices", {})
+        self.price_elasticities = economy_variables.get("price_elasticities", {})
+        self.minimum_threshold = economy_variables.get("minimum_threshold", {})
 
     def calculate_price(self, resource):
         if resource not in self.resource_pools:
@@ -53,5 +42,6 @@ class Economy:
         return actual_gained
 
     def step(self):
-        self.calculate_price("food")
+        for resource in self.resource_pools.keys():
+            self.calculate_price(resource)
         pass

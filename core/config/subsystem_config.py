@@ -18,9 +18,9 @@ except FileNotFoundError:
     raise FileNotFoundError(f"Missing subsystem variables: {SUBSYSTEM_VARIABLE_PATH}")
 
 
-def get_subsystem_variables(season):
+def get_subsystem_variables(sub_type, season):
 
-    base_economy_config = loaded_subsystem_variables["economy"].copy()
+    base_economy_config = loaded_subsystem_variables[sub_type].copy()
 
     economy_modifiers = loaded_season_modifiers.get(season, {}).get("economy", {})
 
@@ -33,3 +33,5 @@ def get_subsystem_variables(season):
                 base_economy_config[section_name][resource_name] = round(base_value * final_multiplier, 4)
 
     return base_economy_config
+
+print(get_subsystem_variables('economy', 'winter'))
