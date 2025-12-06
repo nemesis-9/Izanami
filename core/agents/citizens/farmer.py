@@ -1,4 +1,5 @@
 from core.agents.agent import BaseAgent
+from core.config.agent_config import farmer_config
 
 
 class Farmer(BaseAgent):
@@ -10,8 +11,8 @@ class Farmer(BaseAgent):
         self.has_farm_plot = True
         self.path = None
 
-        self.surplus_threshold = 5     # Food amount needed for market trip
-        self.survival_buffer = 15       # Minimum food to keep after selling
+        self.surplus_threshold = farmer_config["surplus_threshold"]
+        self.survival_buffer = farmer_config["survival_buffer"]
 
         self.home_location = None
         self.destination = None

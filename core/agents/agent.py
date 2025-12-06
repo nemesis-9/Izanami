@@ -1,4 +1,5 @@
 from mesa import Agent
+from core.config.agent_config import agent_config
 
 
 class BaseAgent(Agent):
@@ -12,9 +13,9 @@ class BaseAgent(Agent):
         self.location = None
         self.path = None
 
-        self.food_consumption_rate = 1
-        self.personal_food_supply = 20
-        self.travel_food_cost = 0.1
+        self.food_consumption_rate = agent_config["food_consumption_rate"]
+        self.personal_food_supply = agent_config["personal_food_supply"]
+        self.travel_food_cost = agent_config["travel_food_cost"]
 
     def execute_pathfinding_move(self, current_pos, destination_pos):
         if current_pos == destination_pos:
@@ -39,7 +40,7 @@ class BaseAgent(Agent):
 
     def consume(self):
         food_needed = self.food_consumption_rate
-        replenishment_buffer = 5  # Amount of food the agent tries to buy
+        replenishment_buffer = agent_config["replenishment_buffer"]  # Amount of additional food to buy
 
         if self.personal_food_supply >= food_needed:
             self.personal_food_supply -= food_needed

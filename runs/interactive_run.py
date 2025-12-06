@@ -3,23 +3,11 @@ import shutil
 import pandas as pd
 from core.models.world import WorldModel
 from core.models.city import CityModel
+from core.data_collectors.reporter_agent import reporter_agent
 
-CURRENT_PHASE = 5
+CURRENT_PHASE = 6
 
-MODEL_REPORTERS = {
-    "TotalAgents": lambda m: len(m.agents),
-    "FoodPool": lambda m: m.economy.resource_pools.get("food", 0),
-    "TotalWealth": lambda m: sum(a.wealth for a in m.agents),
-    "FoodPrice": lambda m: m.economy.prices.get("food", 0),
-}
-
-AGENT_REPORTERS = {
-    "AgentID": lambda a: a.unique_id,
-    "AgentLocation": lambda a: a.location,
-    "AgentType": lambda a: getattr(a, 'agent_type', 'Unknown'),
-    "Age": lambda a: a.age,
-    "Wealth": lambda a: a.wealth,
-}
+AGENT_REPORTERS = reporter_agent
 
 if __name__ == '__main__':
     print("--- Starting City Simulation Test ---")
@@ -31,12 +19,12 @@ if __name__ == '__main__':
         parent_world=world,
         width=100,
         height=100,
-        agents=10,
         farmers=15,
         traders=5,
-        model_reporters=MODEL_REPORTERS,
-        agent_reporters=AGENT_REPORTERS
+        resource_pools={},
+        price_pools={}
     )
+
     world.city_models.append(city_instance)
 
     for i in range(50):

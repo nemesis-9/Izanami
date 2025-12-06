@@ -1,4 +1,5 @@
 from core.agents.agent import BaseAgent
+from core.config.agent_config import trader_config
 
 
 class Trader(BaseAgent):
@@ -6,9 +7,9 @@ class Trader(BaseAgent):
         super().__init__(model, wealth, "Trader")
 
         self.inventory = {"food": 0}
-        self.max_inventory = 30
-        self.buying_power = 10          # Max units of goods they can try to buy
-        self.buying_aggression = 0.95    # Buy if the current price is 80% or less of base price
+        self.max_inventory = trader_config["max_inventory"]
+        self.buying_power = trader_config["buying_power"]
+        self.buying_aggression = trader_config["buying_aggression"]
 
         self.path = None
         self.destination = None

@@ -1,29 +1,35 @@
 from mesa import Model, DataCollector
 from mesa.space import MultiGrid
-from core.models.world import WorldModel
 from core.subsystems.economy import Economy
 from core.agents.citizens.farmer import Farmer
 from core.agents.citizens.trader import Trader
 from core.spaces.city_network import CityNetwork
+from core.data_collectors.reporter_model import reporter_model
+from core.data_collectors.reporter_agent import reporter_agent
 
 
 class CityModel(Model):
-    def __init__(self, unique_id, parent_world, width=100, height=100, agents=10, farmers=5, traders=5, model_reporters=None, agent_reporters=None):
+    def __init__(
+            self, unique_id,
+            parent_world, width=100, height=100,
+            farmers=5, traders=5,
+            resource_pools=None, price_pools=None,
+            model_reporters=None, agent_reporters=None
+    ):
         super().__init__()
         self.unique_id = unique_id
         self.parent_world = parent_world
 
         self.grid = MultiGrid(width, height, torus=False)
-        self.economy = Economy(self)
         self.city_network = CityNetwork(self, width, height)
 
+        self.economy = Economy(self, resource_pools, price_pools)
+
         if model_reporters is None:
-            model_reporters = {
-                "TotalAgents": lambda m: len(m.agents),
-                "FoodPool": lambda m: m.economy.resource_pools.get("food", 0),
-                "TotalWealth": lambda m: sum(a.wealth for a in m.agents),
-                "FoodPrice": lambda m: m.economy.prices.get("food", 0),
-            }
+            model_reporters = reporter_model
+        if agent_reporters is None:
+            agent_reporters = reporter_agent
+
         self.datacollector = DataCollector(
             model_reporters=model_reporters,
             agent_reporters=agent_reporters,
