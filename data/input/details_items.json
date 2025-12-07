@@ -1,0 +1,23 @@
+{
+  "sword":
+  {
+    "crafting_time": 2,
+    "crafting_material":
+    {
+      "iron": 2,
+      "copper": 1
+    },
+    "hp": 100
+  },
+  "shield":
+  {
+    "crafting_time": 3,
+    "crafting_material":
+    {
+      "iron": 1,
+      "copper": 1,
+      "wood": 5
+    },
+    "hp": 300
+  }
+}

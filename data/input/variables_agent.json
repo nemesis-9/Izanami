@@ -23,11 +23,35 @@
       "wealth_margin": 10,
       "buying_power":
       {
-        "food": 10
+        "food": 10,
+        "sword": 3,
+        "shield": 3,
+        "gold": 15
       },
       "selling_power":
       {
-        "food": 15
+        "food": 10,
+        "sword": 3,
+        "shield": 3,
+        "gold": 5
+      }
+  },
+
+  "crafter_variables":
+  {
+      "max_inventory": 30,
+      "inventory_margin": 0.7,
+      "wealth_margin": 10,
+      "buying_power":
+      {
+        "iron": 10,
+        "copper": 15,
+        "gold": 5
+      },
+      "selling_power":
+      {
+        "sword": 2,
+        "shield": 1
       }
   }
 }

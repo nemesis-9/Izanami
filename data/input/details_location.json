@@ -1,0 +1,18 @@
+{
+  "market":
+  {
+    "items":
+    [
+      "food",
+      "iron", "copper"
+    ]
+  },
+  "city_center":
+  {
+    "items":
+    [
+      "gold",
+      "sword", "shield"
+    ]
+  }
+}

@@ -1,26 +1,42 @@
 {
   "economy":
   {
+    "wealth": 500,
+    "wealth_margin": 100,
     "base_prices":
     {
-      "food": 2.0
+      "food": 2.0,
+      "iron": 4.0,
+      "copper": 5.0,
+      "gold": 10.0
     },
 
     "price_elasticities": {
-      "food": 0.005
+      "food": 0.005,
+      "iron": 0.002,
+      "copper": 0.007,
+      "gold": 0.01
     },
 
     "minimum_threshold": {
-      "food": 0.5
+      "food": 0.5,
+      "iron": 0.2,
+      "copper": 0.2,
+      "gold": 0.1
     },
 
     "resource_pools": {
       "food": 500,
-      "gold": 0
+      "iron": 100,
+      "copper": 150,
+      "gold": 100
     },
 
     "price_pools": {
-      "food": 2.0
+      "food": 2.2,
+      "iron": 4.1,
+      "copper": 5.7,
+      "gold": 13.0
     }
   }
 }
