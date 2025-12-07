@@ -57,12 +57,14 @@ class Farmer(BaseAgent):
         if not self.alive:
             return
 
+        market = self.model.city_network.points_of_interest["market"]
+
         self.update_agent_config()
         is_moving = self.move()
 
         if not is_moving:
             if self.pos == self.home_location:
                 self.produce()
-            elif self.pos == self.model.city_network.points_of_interest["market"]:
+            elif self.pos == market:
                 self.sell()
 

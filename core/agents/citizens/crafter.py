@@ -1,4 +1,9 @@
 from core.agents.agent import BaseAgent
+from core.config.global_config import global_var
+
+global_variables = global_var()
+location_global_var = global_variables.get('location_items', {})
+crafter_global_var = global_variables.get('agent_items', {}).get('crafter', {})
 
 
 class Craftsman(BaseAgent):
@@ -74,7 +79,7 @@ class Craftsman(BaseAgent):
         buying_resources = [
             resource
             for resource, amount in self.model.economy.resource_pools.items()
-            if resource in ["iron", "copper"] and amount >= 1 and self.inventory.get(resource, 0) < self.buying_power.get(resource, 0)
+            if resource in crafter_global_var['buy'] and amount >= 1 and self.inventory.get(resource, 0) < self.buying_power.get(resource, 0)
         ]
 
         if not buying_resources:
@@ -88,7 +93,7 @@ class Craftsman(BaseAgent):
         selling_resources = [
             resource
             for resource, amount in self.inventory.items()
-            if resource not in ["food", "gold"] and amount > self.selling_power.get(resource, 0)
+            if resource in crafter_global_var['sell'] and amount > self.selling_power.get(resource, 0)
         ]
 
         if not selling_resources:
@@ -97,10 +102,10 @@ class Craftsman(BaseAgent):
 
     def buy_materials(self):
         market = self.model.city_network.points_of_interest["market"]
-        market_goods = []
+        market_goods = location_global_var['market']
 
         city_center = self.model.city_network.points_of_interest["city_center"]
-        city_center_goods = ["iron", "copper"]
+        city_center_goods = location_global_var['city_center']
 
         buying_resources = self.need_to_buy()
         if not buying_resources:
@@ -141,10 +146,10 @@ class Craftsman(BaseAgent):
 
     def sell_goods(self):
         market = self.model.city_network.points_of_interest["market"]
-        market_goods = []
+        market_goods = location_global_var['market']
 
         city_center = self.model.city_network.points_of_interest["city_center"]
-        city_center_goods = ["sword", "shield"]
+        city_center_goods = location_global_var['city_center']
 
         selling_resources = self.need_to_sell()
         if not selling_resources:

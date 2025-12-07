@@ -1,11 +1,16 @@
 from core.agents.agent import BaseAgent
+from core.config.global_config import global_var
+
+global_variables = global_var()
+location_global_var = global_variables.get('location_items', {})
+trader_global_var = global_variables.get('agent_items', {}).get('trader', {})
 
 
 class Trader(BaseAgent):
     def __init__(self, model, wealth, initial_trader_config):
         super().__init__(model, wealth, "Trader")
 
-        self.inventory = {"food": 0}
+        self.inventory = {"food": 2}
 
         self.path = None
 
@@ -35,7 +40,7 @@ class Trader(BaseAgent):
     def toggle_mode(self):
         if self.mode == 'selling':
             self.mode = 'buying'
-        else:
+        elif self.mode == 'buying':
             self.mode = 'selling'
 
     def move(self):
@@ -73,7 +78,7 @@ class Trader(BaseAgent):
         resources_available = [
             resource
             for resource, amount in self.model.economy.resource_pools.items()
-            if resource not in ["gold"] and amount >= 1
+            if resource in trader_global_var['buy'] and amount >= 1
         ]
 
         if not resources_available:
@@ -99,7 +104,7 @@ class Trader(BaseAgent):
         resource_available = [
             resource
             for resource, amount in self.inventory.items()
-            if resource not in ["gold"] and amount >= 1
+            if resource in trader_global_var['sell'] and amount >= 1
         ]
 
         if not resource_available:
@@ -118,10 +123,10 @@ class Trader(BaseAgent):
 
     def buy_goods(self):
         market = self.model.city_network.points_of_interest["market"]
-        market_goods = ["food"]
+        market_goods = location_global_var['market']
 
         city_center = self.model.city_network.points_of_interest["city_center"]
-        city_center_goods = ["wood"]
+        city_center_goods = location_global_var['city_center']
 
         buying_resources = self.need_to_buy()
         if not buying_resources:
@@ -162,10 +167,10 @@ class Trader(BaseAgent):
 
     def sell_goods(self):
         market = self.model.city_network.points_of_interest["market"]
-        market_goods = ["food"]
+        market_goods = location_global_var['market']
 
         city_center = self.model.city_network.points_of_interest["city_center"]
-        city_center_goods = ["sword", "shield"]
+        city_center_goods = location_global_var['city_center']
 
         selling_resources = self.need_to_sell()
         if not selling_resources:
