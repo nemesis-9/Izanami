@@ -2,8 +2,10 @@ class Economy:
     def __init__(self, model, economy_variables):
         self.model = model
 
-        self.resource_pools = economy_variables.get("resource_pools", {})
+        self.wealth = economy_variables.get("wealth", 0)
+        self.wealth_margin = economy_variables.get("wealth_margin", 0)
 
+        self.resource_pools = economy_variables.get("resource_pools", {})
         self.price_pools = economy_variables.get("price_pools", {})
 
         self.base_prices = economy_variables.get("base_prices", {})
@@ -28,12 +30,29 @@ class Economy:
         return self.price_pools[resource]
 
     def add_resource(self, resource_name, amount):
-        if resource_name in self.resource_pools:
-            self.resource_pools[resource_name] += amount
+        if amount <= 0:
+            return 0
+
+        current_price = self.calculate_price(resource_name)
+        total_cost = current_price * amount
+        affordable_cost = self.wealth * self.wealth_margin
+
+        if total_cost > affordable_cost:
+            affordable_amount = int(affordable_cost / current_price) if not current_price == 0 else 0
         else:
-            self.resource_pools[resource_name] = amount
+            affordable_amount = amount
+
+        if resource_name in self.resource_pools:
+            self.resource_pools[resource_name] += affordable_amount
+        else:
+            self.resource_pools[resource_name] = affordable_amount
+
+        return affordable_amount
 
     def request_resource(self, resource_name, amount):
+        if amount <= 0:
+            return 0
+
         if resource_name not in self.resource_pools or self.resource_pools[resource_name] <= 0:
             return 0
 

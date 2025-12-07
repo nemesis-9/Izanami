@@ -143,18 +143,18 @@ class Trader(BaseAgent):
             elif resource in city_center_goods and self.pos != city_center:
                 continue
 
-            max_buy_by_power = int(self.buying_power / current_price) if current_price > 0 else 0
+            max_buy_by_power = int(self.buying_power.get(resource, 0) / current_price) if current_price > 0 else 0
             max_buy_by_wealth = int(self.wealth / current_price) if current_price > 0 else 0
             max_buy_by_inventory = self.max_inventory - sum(self.inventory.values())
 
-            quantity = min(max_buy_by_power, max_buy_by_wealth, max_buy_by_inventory, self.buying_power[resource])
+            quantity = min(max_buy_by_power, max_buy_by_wealth, max_buy_by_inventory)
 
             if quantity > 0:
                 buying_quantity = self.model.economy.request_resource(resource, quantity)
                 if buying_quantity > 0:
                     cost = current_price * buying_quantity
                     self.wealth -= cost
-                    self.model.economy.add_resource('gold', cost)
+                    self.model.economy.wealth += cost
                     self.inventory[resource] = self.inventory.get(resource, 0) + buying_quantity
 
         if sum(self.inventory.values()) >= self.max_inventory * self.inventory_margin or self.wealth < self.wealth_margin:
@@ -165,7 +165,7 @@ class Trader(BaseAgent):
         market_goods = ["food"]
 
         city_center = self.model.city_network.points_of_interest["city_center"]
-        city_center_goods = ["wood"]
+        city_center_goods = ["sword", "shield"]
 
         selling_resources = self.need_to_sell()
         if not selling_resources:
@@ -187,18 +187,15 @@ class Trader(BaseAgent):
             elif resource in city_center_goods and self.pos != city_center:
                 continue
 
-            quantity = min(self.inventory.get(resource, 0), self.selling_power[resource])
+            quantity = min(self.inventory.get(resource, 0), self.selling_power.get(resource, 0))
 
             if quantity > 0:
-                selling_quantity = self.inventory[resource]
+                selling_quantity = self.model.economy.add_resource(resource, quantity)
                 if selling_quantity > 0:
                     income = current_price * selling_quantity
                     self.wealth += income
-                    self.model.economy.request_resource('gold', income)
+                    self.model.economy.wealth -= income
                     self.inventory[resource] -= selling_quantity
-
-        if sum(self.inventory.values()) < self.max_inventory * self.inventory_margin:
-            self.toggle_mode()
 
     def step(self):
         super().step()
@@ -213,6 +210,8 @@ class Trader(BaseAgent):
 
         if not is_moving:
             if self.pos == market:
+                self.sell_goods()
                 self.buy_goods()
             elif self.pos == city_center:
                 self.sell_goods()
+                self.buy_goods()

@@ -10,8 +10,8 @@ class Farmer(BaseAgent):
         self.has_farm_plot = True
         self.path = None
 
-        self.surplus_threshold = initial_farmer_config["surplus_threshold"]
-        self.survival_buffer = initial_farmer_config["survival_buffer"]
+        self.surplus_threshold = initial_farmer_config.get("surplus_threshold", 0)
+        self.survival_buffer = initial_farmer_config.get("survival_buffer", 0)
 
         self.home_location = None
         self.destination = None
@@ -19,8 +19,8 @@ class Farmer(BaseAgent):
     def update_agent_config(self):
         super().update_agent_config()
         farmer_vars = self.model.farmer_variables
-        self.surplus_threshold = farmer_vars["surplus_threshold"]
-        self.survival_buffer = farmer_vars["survival_buffer"]
+        self.surplus_threshold = farmer_vars.get("surplus_threshold", 0)
+        self.survival_buffer = farmer_vars.get("survival_buffer", 0)
 
     def move(self):
         current_pos = self.pos
@@ -42,13 +42,15 @@ class Farmer(BaseAgent):
         self.personal_food_supply += production_amount
 
     def sell(self):
+        current_price = self.model.economy.calculate_price("food")
         surplus = self.personal_food_supply - self.survival_buffer
         if surplus > 0:
-            current_price = self.model.economy.calculate_price("food")
-            income = current_price * surplus
-            self.model.economy.add_resource("food", surplus)
-            self.wealth += income
-            self.personal_food_supply = self.survival_buffer
+            selling_quantity = self.model.economy.add_resource("food", surplus)
+            if selling_quantity > 0:
+                income = current_price * selling_quantity
+                self.wealth += income
+                self.model.economy.wealth -= income
+                self.personal_food_supply -= selling_quantity
 
     def step(self):
         super().step()

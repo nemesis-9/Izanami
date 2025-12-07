@@ -14,16 +14,16 @@ class BaseAgent(Agent):
 
         base_vars = model.base_variables
 
-        self.personal_food_supply = base_vars["personal_food_supply"]
-        self.food_consumption_rate = base_vars["food_consumption_rate"]
-        self.travel_food_cost = base_vars["travel_food_cost"]
-        self.replenishment_buffer = base_vars["replenishment_buffer"]
+        self.personal_food_supply = base_vars.get("personal_food_supply", 0)
+        self.food_consumption_rate = base_vars.get("food_consumption_rate", 1)
+        self.travel_food_cost = base_vars.get("travel_food_cost", 0.0)
+        self.replenishment_buffer = base_vars.get("replenishment_buffer", 0)
 
     def update_agent_config(self):
         base_vars = self.model.base_variables
-        self.food_consumption_rate = base_vars["food_consumption_rate"]
-        self.travel_food_cost = base_vars["travel_food_cost"]
-        self.replenishment_buffer = base_vars["replenishment_buffer"]
+        self.food_consumption_rate = base_vars.get("food_consumption_rate", 1)
+        self.travel_food_cost = base_vars.get("travel_food_cost", 0.0)
+        self.replenishment_buffer = base_vars.get("replenishment_buffer", 0)
 
     def execute_pathfinding_move(self, current_pos, destination_pos):
         if current_pos == destination_pos:
@@ -48,7 +48,7 @@ class BaseAgent(Agent):
 
     def consume(self):
         food_needed = self.food_consumption_rate
-        replenishment_buffer = self.replenishment_buffer    # Amount of additional food to buy
+        replenishment_buffer = self.replenishment_buffer
 
         if self.personal_food_supply >= food_needed:
             self.personal_food_supply -= food_needed
@@ -58,8 +58,8 @@ class BaseAgent(Agent):
             food_to_request = food_needed - self.personal_food_supply
             amount_to_acquire = food_to_request + replenishment_buffer
             current_price = self.model.economy.calculate_price("food")
-            total_cost = amount_to_acquire * current_price      # for amount_to_acquire
-            minimum_cost = food_to_request * current_price      # for food_to_request
+            total_cost = amount_to_acquire * current_price
+            minimum_cost = food_to_request * current_price
 
             if self.wealth >= minimum_cost:
 
@@ -72,6 +72,7 @@ class BaseAgent(Agent):
                 if food_gained > 0:
                     actual_cost = food_gained * current_price
                     self.wealth -= actual_cost
+                    self.model.economy.wealth += actual_cost
                     self.personal_food_supply += food_gained - food_needed
                     return True
 
