@@ -13,24 +13,24 @@ class Trader(BaseAgent):
         self.destination = None
         self.mode = 'selling'
 
-        self.max_inventory = initial_trader_config["max_inventory"]
-        self.buying_power = initial_trader_config["buying_power"]
-        self.buying_aggression = initial_trader_config["buying_aggression"]
-        self.selling_power = initial_trader_config["selling_power"]
-        self.selling_aggression = initial_trader_config["selling_aggression"]
-        self.inventory_margin = initial_trader_config["inventory_margin"]
-        self.wealth_margin = initial_trader_config["wealth_margin"]
+        self.max_inventory = initial_trader_config.get("max_inventory", 0)
+        self.buying_power = initial_trader_config.get("buying_power", {})
+        self.buying_aggression = initial_trader_config.get("buying_aggression", 1.0)
+        self.selling_power = initial_trader_config.get("selling_power", {})
+        self.selling_aggression = initial_trader_config.get("selling_aggression", 1.0)
+        self.inventory_margin = initial_trader_config.get("inventory_margin", 0)
+        self.wealth_margin = initial_trader_config.get("wealth_margin", 0)
 
     def update_agent_config(self):
         super().update_agent_config()
         trader_vars = self.model.trader_variables
-        self.max_inventory = trader_vars["max_inventory"]
-        self.buying_power = trader_vars["buying_power"]
-        self.buying_aggression = trader_vars["buying_aggression"]
-        self.selling_power = trader_vars["selling_power"]
-        self.selling_aggression = trader_vars["selling_aggression"]
-        self.inventory_margin = trader_vars["inventory_margin"]
-        self.wealth_margin = trader_vars["wealth_margin"]
+        self.max_inventory = trader_vars.get("max_inventory", 0)
+        self.buying_power = trader_vars.get("buying_power", {})
+        self.buying_aggression = trader_vars.get("buying_aggression", 1.0)
+        self.selling_power = trader_vars.get("selling_power", {})
+        self.selling_aggression = trader_vars.get("selling_aggression", 1.0)
+        self.inventory_margin = trader_vars.get("inventory_margin", 0)
+        self.wealth_margin = trader_vars.get("wealth_margin", 0)
 
     def toggle_mode(self):
         if self.mode == 'selling':
@@ -80,9 +80,10 @@ class Trader(BaseAgent):
             return False
 
         for resource in resources_available:
-            base_price = self.model.economy.base_price[resource]
+            base_price = self.model.economy.base_prices.get(resource)
             current_price = self.model.economy.calculate_price(resource)
-            buying_price = base_price * self.buying_aggression
+
+            buying_price = round(base_price * self.buying_aggression, 3)
             if current_price <= buying_price:
                 buying_resources.append(resource)
 
@@ -107,7 +108,7 @@ class Trader(BaseAgent):
         for resource in resource_available:
             base_price = self.model.economy.base_price[resource]
             current_price = self.model.economy.calculate_price(resource)
-            selling_price = base_price * self.selling_aggression
+            selling_price = round(base_price * self.selling_aggression, 3)
             if current_price >= selling_price:
                 selling_resources.append(resource)
 

@@ -33,5 +33,3 @@ def get_subsystem_variables(sub_type, season):
                 base_economy_config[section_name][resource_name] = round(base_value * final_multiplier, 4)
 
     return base_economy_config
-
-print(get_subsystem_variables('economy', 'winter'))

@@ -14,13 +14,13 @@ class Economy:
         if resource not in self.resource_pools:
             return 0
 
-        resource_pool = self.resource_pools[resource]
-        base_price = self.base_prices[resource]
-        price_elasticity = self.price_elasticities[resource]
-        minimum_threshold = self.minimum_threshold[resource]
+        resource_pool = self.resource_pools.get(resource, 0)
+        base_price = self.base_prices.get(resource, 0)
+        price_elasticity = self.price_elasticities.get(resource, 0)
+        minimum_threshold = self.minimum_threshold.get(resource, 0)
 
         # simple inverse relationship formula
-        new_price = base_price - (resource_pool * price_elasticity)
+        new_price = round(base_price - (resource_pool * price_elasticity), 3)
 
         # minimum threshold
         self.price_pools[resource] = max(minimum_threshold, new_price)

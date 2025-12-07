@@ -17,12 +17,11 @@ if __name__ == '__main__':
     city_instance = CityModel(
         unique_id=1,
         parent_world=world,
+        seasons=['sprint', 'summer', 'autumn', 'winter'],
         width=100,
         height=100,
         farmers=15,
         traders=5,
-        resource_pools={},
-        price_pools={}
     )
 
     world.city_models.append(city_instance)

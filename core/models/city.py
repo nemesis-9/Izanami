@@ -17,7 +17,6 @@ class CityModel(Model):
             seasons, season_length=25,
             width=100, height=100,
             farmers=5, traders=5,
-            resource_pools=None, price_pools=None,
             model_reporters=None, agent_reporters=None
     ):
         super().__init__()
@@ -73,7 +72,7 @@ class CityModel(Model):
             agent.home_location = (x, y)
 
     def update_season(self):
-        if self.schedule.steps % self.season_length == 0 and self.schedule.steps > 0:
+        if self.steps % self.season_length == 0 and self.steps > 0:
             self.current_season_index = (self.current_season_index + 1) % len(self.seasons)
             self.current_season = self.seasons[self.current_season_index]
 
@@ -82,7 +81,6 @@ class CityModel(Model):
             self.trader_variables = get_variables("trader", self.current_season)
 
             print(f"\n--- Season Change! It is now {self.current_season} ---")
-
 
     def step(self):
         self.update_season()
