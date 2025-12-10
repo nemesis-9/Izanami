@@ -42,6 +42,8 @@
       "max_inventory": 30,
       "inventory_margin": 0.7,
       "wealth_margin": 10,
+      "high_inventory_threshold": 0.8,
+      "low_wealth_threshold": 2,
       "buying_power":
       {
         "iron": 10,
