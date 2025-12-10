@@ -2,8 +2,8 @@ from mesa import Model, DataCollector
 from mesa.space import MultiGrid
 
 from core.subsystems.economy import Economy
-from core.agents.citizens.farmer import Farmer
-from core.agents.citizens.trader import Trader
+from core.agents.citizens.farmer.farmer import Farmer
+from core.agents.citizens.trader.trader import Trader
 from core.spaces.city_network import CityNetwork
 from core.data_collectors.reporter_model import reporter_model
 from core.data_collectors.reporter_agent import reporter_agent

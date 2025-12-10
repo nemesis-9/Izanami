@@ -48,6 +48,7 @@ def agent_item_list():
 
 def global_var():
     result = {
+        'items': loaded_items,
         'location_item': location_item_list(),
         'agent_items': agent_item_list(),
     }
