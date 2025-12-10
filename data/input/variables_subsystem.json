@@ -38,5 +38,36 @@
       "copper": 5.7,
       "gold": 13.0
     }
+  },
+
+  "governance":
+  {
+    "initial_budget": 5000,
+    "treasury_min": 1000,
+    "treasury_max": 50000,
+
+    "tax_rate": 0.05,
+    "tax_min_rate": 0.01,
+    "tax_max_rate": 0.3,
+    "tax_adj_rate": 0.01,
+    "tax_threshold": 5.0,
+
+    "aid_fund":
+    {
+      "food": 40
+    },
+    "aid_amount":
+    {
+      "food": 4
+    },
+    "aid_price_margin":
+    {
+      "food": 0.5
+    },
+    "aid_thresholds":
+    {
+      "wealth": 6,
+      "food": 4
+    }
   }
 }

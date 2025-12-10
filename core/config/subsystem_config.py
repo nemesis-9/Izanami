@@ -20,16 +20,29 @@ except FileNotFoundError:
 
 def get_subsystem_variables(sub_type, season):
 
-    base_economy_config = loaded_subsystem_variables[sub_type].copy()
+    base_subsystem_config = loaded_subsystem_variables[sub_type].copy()
 
-    economy_modifiers = loaded_season_modifiers.get(season, {}).get("economy", {})
+    season_modifiers = loaded_season_modifiers.get(season, {}).get(sub_type, {})
+    print(base_subsystem_config.items())
 
-    for section_name, resource_dict in base_economy_config.items():
-        for resource_name, base_value in resource_dict.items():
-            resource_modifier_dict = economy_modifiers.get(resource_name, {})
-            final_multiplier = resource_modifier_dict.get(section_name, 1.0)
+    for section_name, resource_dict in base_subsystem_config.items():
 
-            if isinstance(base_value, (int, float)):
-                base_economy_config[section_name][resource_name] = round(base_value * final_multiplier, 4)
+        if isinstance(resource_dict, dict):
+            for resource_name, base_value in resource_dict.items():
+                resource_modifier_dict = season_modifiers.get(resource_name, {})
+                final_multiplier = resource_modifier_dict.get(section_name, 1.0)
 
-    return base_economy_config
+                if isinstance(base_value, (int, float)):
+                    base_subsystem_config[section_name][resource_name] = round(base_value * final_multiplier, 4)
+
+        elif isinstance(resource_dict, (int, float)):
+            final_multiplier = season_modifiers.get(section_name, 1.0)
+            base_subsystem_config[section_name] = round(resource_dict * final_multiplier, 4)
+
+    return base_subsystem_config
+
+
+# print(get_subsystem_variables("governance", "sprint"))
+# print(get_subsystem_variables("governance", "summer"))
+# print(get_subsystem_variables("governance", "autumn"))
+# print(get_subsystem_variables("governance", "winter"))
