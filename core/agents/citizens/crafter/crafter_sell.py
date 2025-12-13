@@ -1,23 +1,24 @@
-from mesa import Agent
+from core.config.global_config import GlobalConfig
 
-from core.config.global_config import global_var
-
-global_variables = global_var()
-location_global_var = global_variables.get('location_items', {})
-crafter_global_var = global_variables.get('agent_items', {}).get('crafter', {})
+global_config = GlobalConfig().get()
+location_config = global_config.location_item_list()
+crafter_config = global_config.agent_item_list('crafter')
 
 
 class CrafterSell:
-    def need_to_sell(self, crafter):
-        if sum(crafter.inventory.values()) <= 0:
+    def __init__(self, crafter):
+        self.crafter = crafter
+
+    def need_to_sell(self):
+        if sum(self.crafter.inventory.values()) <= 0:
             return False
 
         selling_resources = [
             resource
-            for resource, amount in crafter.inventory.items()
+            for resource, amount in self.crafter.inventory.items()
             if (
-                    resource in crafter_global_var['sell'] and
-                    amount > crafter.selling_power.get(resource, 0)
+                    resource in crafter_config['sell'] and
+                    amount > self.crafter.selling_power.get(resource, 0)
             )
         ]
 
@@ -25,14 +26,14 @@ class CrafterSell:
             return False
         return selling_resources
 
-    def sell_goods(self, crafter):
+    def sell_goods(self):
         market = crafter.model.city_network.points_of_interest["market"]
-        market_goods = location_global_var['market']
+        market_goods = location_config['market']
 
         city_center = crafter.model.city_network.points_of_interest["city_center"]
-        city_center_goods = location_global_var['city_center']
+        city_center_goods = location_config['city_center']
 
-        selling_resources = self.need_to_sell(crafter)
+        selling_resources = self.need_to_sell()
         if not selling_resources:
             crafter.toggle_mode()
             return

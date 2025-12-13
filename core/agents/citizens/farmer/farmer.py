@@ -8,7 +8,7 @@ from farmer_travel import FarmerTravel
 
 class Farmer(BaseAgent):
     def __init__(self, model, wealth, initial_farmer_config):
-        super().__init__(model, wealth, "Farmer")
+        super().__init__(model, wealth, "farmer")
 
         self.food_production_rate = self.random.randrange(3, 7)
 
@@ -21,10 +21,10 @@ class Farmer(BaseAgent):
         self.home_location = None
         self.destination = None
 
-        self.trade = AgentTrade()
-        self.producing_logic = FarmerProduce()
-        self.selling_logic = FarmerSell()
-        self.travel_logic = FarmerTravel()
+        self.trade = AgentTrade(self)
+        self.producing_logic = FarmerProduce(self)
+        self.selling_logic = FarmerSell(self)
+        self.travel_logic = FarmerTravel(self)
 
     def update_agent_config(self):
         super().update_agent_config()
@@ -33,15 +33,15 @@ class Farmer(BaseAgent):
         self.survival_buffer = farmer_vars.get("survival_buffer", 0)
 
     def move(self):
-        return self.travel_logic.move(self)
+        return self.travel_logic.move()
 
     def produce(self):
-        self.producing_logic.produce(self)
+        self.producing_logic.produce()
 
     def sell_goods(self):
-        selling_resources = self.selling_logic.sell_goods(self)
+        selling_resources = self.selling_logic.sell_goods()
         if selling_resources:
-            self.trade.sell_goods(self, selling_resources)
+            self.trade.sell_goods(selling_resources)
 
     def step(self):
         super().step()
@@ -58,4 +58,3 @@ class Farmer(BaseAgent):
                 self.produce()
             elif self.pos == market:
                 self.sell_goods()
-

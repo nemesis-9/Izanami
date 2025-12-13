@@ -1,15 +1,16 @@
 from core.agents.base.agent import BaseAgent
 
 from core.agents.base.agent_trade import AgentTrade
+
 from crafter_buy import CrafterBuy
 from crafter_sell import CrafterSell
 from crafter_travel import CrafterTravel
 from crafter_craft import CrafterCraft
 
 
-class Craftsman(BaseAgent):
+class Crafter(BaseAgent):
     def __init__(self, model, wealth, initial_craftsman_config):
-        super().__init__(model, wealth, "Craftsman")
+        super().__init__(model, wealth, "crafter")
 
         self.inventory = {"iron": 20, "copper": 15}
         self.crafting_rate = self.random.randrange(4, 10)
@@ -20,11 +21,11 @@ class Craftsman(BaseAgent):
         self.destination = None
         self.mode = 'crafting'
 
-        self.trade = AgentTrade()
-        self.buying_logic = CrafterBuy()
-        self.selling_logic = CrafterSell()
-        self.travel_logic = CrafterTravel()
-        self.crafting_logic = CrafterCraft()
+        self.trade = AgentTrade(self)
+        self.buying_logic = CrafterBuy(self)
+        self.selling_logic = CrafterSell(self)
+        self.travel_logic = CrafterTravel(self)
+        self.crafting_logic = CrafterCraft(self)
 
         self.max_inventory = initial_craftsman_config.get("max_inventory", 0)
         self.buying_power = initial_craftsman_config.get("buying_power", {})
@@ -52,24 +53,27 @@ class Craftsman(BaseAgent):
             self.mode = 'crafting'
 
     def move(self):
-        return self.travel_logic.move(self)
+        return self.travel_logic.move()
 
     def buy_materials(self):
-        buying_resources = self.buying_logic.buy_materials(self)
+        buying_resources = self.buying_logic.buy_materials()
         if buying_resources:
-            self.trade.buy_goods(self, buying_resources)
+            self.trade.buy_goods(buying_resources)
 
-        if sum(self.inventory.values()) >= self.max_inventory * self.inventory_margin or self.wealth < self.wealth_margin:
+        if (
+                sum(self.inventory.values()) >= self.max_inventory * self.inventory_margin
+                or self.wealth < self.wealth_margin
+        ):
             self.toggle_mode()
 
     def sell_goods(self):
-        selling_resources = self.selling_logic.sell_goods(self)
+        selling_resources = self.selling_logic.sell_goods()
         if selling_resources:
-            self.trade.sell_goods(self, selling_resources)
+            self.trade.sell_goods(selling_resources)
 
     # Craft function
     def craft(self):
-        return self.crafting_logic.craft(self)
+        return self.crafting_logic.craft()
 
     def step(self):
         super().step()

@@ -8,7 +8,7 @@ from trader_travel import TraderTravel
 
 class Trader(BaseAgent):
     def __init__(self, model, wealth, initial_trader_config):
-        super().__init__(model, wealth, "Trader")
+        super().__init__(model, wealth, "trader")
 
         self.inventory = {"food": 2}
 
@@ -18,10 +18,10 @@ class Trader(BaseAgent):
         self.destination = None
         self.mode = 'selling'
 
-        self.trade = AgentTrade()
-        self.buying_logic = TraderBuy()
-        self.selling_logic = TraderSell()
-        self.travel_logic = TraderTravel()
+        self.trade = AgentTrade(self)
+        self.buying_logic = TraderBuy(self)
+        self.selling_logic = TraderSell(self)
+        self.travel_logic = TraderTravel(self)
 
         self.max_inventory = initial_trader_config.get("max_inventory", 0)
         self.buying_power = initial_trader_config.get("buying_power", {})
@@ -49,20 +49,23 @@ class Trader(BaseAgent):
             self.mode = 'selling'
 
     def move(self):
-        return self.travel_logic.move(self)
+        return self.travel_logic.move()
 
     def buy_goods(self):
-        buying_resources = self.buying_logic.buy_goods(self)
+        buying_resources = self.buying_logic.buy_goods()
         if buying_resources:
-            self.trade.buy_goods(self, buying_resources)
+            self.trade.buy_goods(buying_resources)
 
-        if sum(self.inventory.values()) >= self.max_inventory * self.inventory_margin or self.wealth < self.wealth_margin:
+        if (
+                sum(self.inventory.values()) >= self.max_inventory * self.inventory_margin
+                or self.wealth < self.wealth_margin
+        ):
             self.toggle_mode()
 
     def sell_goods(self):
-        selling_resources = self.selling_logic.sell_goods(self)
+        selling_resources = self.selling_logic.sell_goods()
         if selling_resources:
-            self.trade.sell_goods(self, selling_resources)
+            self.trade.sell_goods(selling_resources)
 
     def step(self):
         super().step()

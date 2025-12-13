@@ -1,27 +1,30 @@
 class CrafterTravel:
-    def move(self, crafter):
-        current_pos = crafter.pos
+    def __init__(self, crafter):
+        self.crafter = crafter
 
-        city_center = crafter.model.city_network.points_of_interest["city_center"]
-        market = crafter.model.city_network.points_of_interest["market"]
+    def move(self):
+        current_pos = self.crafter.pos
 
-        if crafter.mode == 'selling':
-            selling_resources = crafter.selling_logic.need_to_sell(crafter)
+        city_center = self.crafter.model.city_network.points_of_interest["city_center"]
+        market = self.crafter.model.city_network.points_of_interest["market"]
+
+        if self.crafter.mode == 'selling':
+            selling_resources = self.crafter.selling_logic.need_to_sell()
             if not selling_resources:
-                crafter.toggle_mode()
+                self.crafter.toggle_mode()
             else:
-                crafter.destination = city_center
+                self.crafter.destination = city_center
 
-        elif crafter.mode == 'buying':
-            buying_resources = crafter.buying_logic.need_to_buy(crafter)
+        elif self.crafter.mode == 'buying':
+            buying_resources = self.crafter.buying_logic.need_to_buy()
             if not buying_resources:
-                crafter.toggle_mode()
+                self.crafter.toggle_mode()
             else:
-                crafter.destination = market
+                self.crafter.destination = market
 
         else:
-            crafter.destination = crafter.home_location
+            self.crafter.destination = self.crafter.home_location
 
-        if crafter.destination and crafter.destination != crafter.pos:
-            return crafter.execute_pathfinding_move(current_pos, crafter.destination)
+        if self.crafter.destination and self.crafter.destination != self.crafter.pos:
+            return self.crafter.execute_pathfinding_move(current_pos, self.crafter.destination)
         return False

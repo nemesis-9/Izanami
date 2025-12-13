@@ -21,8 +21,8 @@ class BaseAgent(Agent):
         self.travel_food_cost = base_vars.get("travel_food_cost", 0.0)
         self.replenishment_buffer = base_vars.get("replenishment_buffer", 0)
 
-        self.consume_logic = AgentConsumeLogic()
-        self.travel_logic = AgentTravel()
+        self.consume_logic = AgentConsumeLogic(self)
+        self.travel_logic = AgentTravel(self)
 
     def update_agent_config(self):
         base_vars = self.model.base_variables
@@ -31,11 +31,11 @@ class BaseAgent(Agent):
         self.replenishment_buffer = base_vars.get("replenishment_buffer", 0)
 
     def execute_pathfinding_move(self, current_pos, destination_pos):
-        return self.travel_logic.pathfinding_move(self, current_pos, destination_pos)
+        return self.travel_logic.pathfinding_move(current_pos, destination_pos)
 
     def step(self):
         self.update_agent_config()
         self.age += 1
-        if not self.consume_logic.consume(self):
+        if not self.consume_logic.consume():
             return
         pass
