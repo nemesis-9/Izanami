@@ -11,7 +11,7 @@ class AgentConsumeLogic:
         total_cost = amount_to_acquire * current_price
         minimum_cost = food_to_request * current_price
 
-        if self.agent.weself.alth >= minimum_cost:
+        if self.agent.wealth >= minimum_cost:
 
             if self.agent.wealth >= total_cost:
                 amount_to_buy = amount_to_acquire
@@ -27,8 +27,7 @@ class AgentConsumeLogic:
                 return True
 
             else:
-                self.agent.alive = False
-                print(f"[{self.agent.unique_id}] {self.agent.agent_type} starved to death - market empty")
+                self.agent.hp -= self.agent.hp_starve_penalty
                 return False
 
     def consume(self):
@@ -45,6 +44,5 @@ class AgentConsumeLogic:
                 return True
 
             else:
-                self.agent.alive = False
-                print(f"[{self.agent.unique_id}] {self.agent.agent_type} starved to death - no enough money")
+                self.agent.hp -= self.agent.hp_starve_penalty
                 return False

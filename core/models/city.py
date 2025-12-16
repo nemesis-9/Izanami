@@ -1,7 +1,7 @@
 from mesa import Model, DataCollector
 from mesa.space import MultiGrid
 
-from core.subsystems.economy import Economy
+from core.subsystems.economy.economy import Economy
 from core.agents.citizens.farmer.farmer import Farmer
 from core.agents.citizens.trader.trader import Trader
 from core.spaces.city_network import CityNetwork

@@ -16,6 +16,9 @@ class BaseAgent(Agent):
 
         base_vars = model.base_variables
 
+        self.hp = base_vars.get("initial_hp", 100)
+        self.hp_change_food = base_vars.get("hp_starve_penalty", 0)
+
         self.personal_food_supply = base_vars.get("personal_food_supply", 0)
         self.food_consumption_rate = base_vars.get("food_consumption_rate", 1)
         self.travel_food_cost = base_vars.get("travel_food_cost", 0.0)
@@ -35,7 +38,10 @@ class BaseAgent(Agent):
 
     def step(self):
         self.update_agent_config()
-        self.age += 1
-        if not self.consume_logic.consume():
-            return
-        pass
+        if self.hp > 0:
+            self.age += 1
+            if not self.consume_logic.consume():
+                return
+            pass
+        else:
+            self.alive = False

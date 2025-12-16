@@ -1,6 +1,10 @@
 {
   "base_variables":
   {
+      "initial_hp": 100,
+      "hp_min_margin" : 40,
+      "hp_starve_penalty": 20,
+
       "food_consumption_rate": 1,
       "personal_food_supply": 20,
       "travel_food_cost": 0.1,
