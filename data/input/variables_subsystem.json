@@ -25,6 +25,13 @@
       "gold": 0.1
     },
 
+    "target_supply": {
+      "food": 1000,
+      "iron": 1000,
+      "copper": 1500,
+      "gold": 3000
+    },
+
     "resource_pools": {
       "food": 500,
       "iron": 100,
