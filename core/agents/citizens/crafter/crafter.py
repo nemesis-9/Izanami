@@ -2,14 +2,14 @@ from core.agents.base.agent import BaseAgent
 
 from core.agents.base.agent_trade import AgentTrade
 
-from crafter_buy import CrafterBuy
-from crafter_sell import CrafterSell
-from crafter_travel import CrafterTravel
-from crafter_craft import CrafterCraft
+from core.agents.citizens.crafter.crafter_buy import CrafterBuy
+from core.agents.citizens.crafter.crafter_sell import CrafterSell
+from core.agents.citizens.crafter.crafter_travel import CrafterTravel
+from core.agents.citizens.crafter.crafter_craft import CrafterCraft
 
 
 class Crafter(BaseAgent):
-    def __init__(self, model, wealth, initial_craftsman_config):
+    def __init__(self, model, wealth, initial_crafter_config):
         super().__init__(model, wealth, "crafter")
 
         self.inventory = {"iron": 20, "copper": 15}
@@ -27,11 +27,11 @@ class Crafter(BaseAgent):
         self.travel_logic = CrafterTravel(self)
         self.crafting_logic = CrafterCraft(self)
 
-        self.max_inventory = initial_craftsman_config.get("max_inventory", 0)
-        self.buying_power = initial_craftsman_config.get("buying_power", {})
-        self.selling_power = initial_craftsman_config.get("selling_power", {})
-        self.inventory_margin = initial_craftsman_config.get("inventory_margin", 0)
-        self.wealth_margin = initial_craftsman_config.get("wealth_margin", 0)
+        self.max_inventory = initial_crafter_config.get("max_inventory", 0)
+        self.buying_power = initial_crafter_config.get("buying_power", {})
+        self.selling_power = initial_crafter_config.get("selling_power", {})
+        self.inventory_margin = initial_crafter_config.get("inventory_margin", 0)
+        self.wealth_margin = initial_crafter_config.get("wealth_margin", 0)
 
     def update_agent_config(self):
         super().update_agent_config()

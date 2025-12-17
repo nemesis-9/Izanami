@@ -66,4 +66,4 @@ class CrafterBuy:
                 if quantity > 0:
                     final_list.append((resource, quantity))
 
-            return final_list
+        return final_list

@@ -1,5 +1,6 @@
 import math
 
+
 class EconomyPrice:
     def __init__(self, econ):
         self.econ = econ

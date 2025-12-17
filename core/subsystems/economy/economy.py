@@ -1,6 +1,6 @@
-from econ_price import EconomyPrice
-from econ_add import EconomyAdd
-from econ_remove import EconomyRemove
+from core.subsystems.economy.econ_price import EconomyPrice
+from core.subsystems.economy.econ_add import EconomyAdd
+from core.subsystems.economy.econ_remove import EconomyRemove
 
 
 class Economy:

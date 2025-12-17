@@ -1,5 +1,9 @@
-class FarmerTravel:
+from core.agents.base.agent_travel import AgentTravel
+
+
+class FarmerTravel(AgentTravel):
     def __init__(self, farmer):
+        super().__init__(farmer)
         self.farmer = farmer
 
     def move(self):

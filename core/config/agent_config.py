@@ -30,7 +30,7 @@ class AgentConfig:
 
     def agent_var(self, var_type, season):
         required_variables = self.agent_variables.get(f"{var_type}_variables", {})
-        season_config = season.season_modifiers.get(season, {}).get("agent", {})
+        season_config = self.season_modifiers.get(season, {}).get("agent", {})
 
         result = {}
 
@@ -39,5 +39,4 @@ class AgentConfig:
                 result[key] = round(value * season_config.get(key, 1.0), 4)
             else:
                 result[key] = value
-
         return result

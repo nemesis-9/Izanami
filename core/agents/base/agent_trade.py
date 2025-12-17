@@ -17,7 +17,7 @@ class AgentTrade:
         for resource, amount in selling_resources:
             if amount > 0:
                 current_price = self.agent.model.economy.calculate_price(resource)
-                selling_quantity = self.agent.model.economy.allocate_resource(resource, amount)
+                selling_quantity = self.agent.model.economy.add_resource(resource, amount)
                 if selling_quantity > 0:
                     income = current_price * selling_quantity
                     self.agent.wealth += income

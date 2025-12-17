@@ -1,9 +1,10 @@
 from core.agents.base.agent import BaseAgent
 
 from core.agents.base.agent_trade import AgentTrade
-from trader_buy import TraderBuy
-from trader_sell import TraderSell
-from trader_travel import TraderTravel
+
+from core.agents.citizens.trader.trader_buy import TraderBuy
+from core.agents.citizens.trader.trader_sell import TraderSell
+from core.agents.citizens.trader.trader_travel import TraderTravel
 
 
 class Trader(BaseAgent):

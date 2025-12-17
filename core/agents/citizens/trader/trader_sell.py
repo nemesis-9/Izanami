@@ -24,7 +24,7 @@ class TraderSell:
             return False
 
         for resource in resource_available:
-            base_price = self.trader.model.economy.base_price[resource]
+            base_price = self.trader.model.economy.base_prices[resource]
             current_price = self.trader.model.economy.calculate_price(resource)
             selling_price = round(base_price * self.trader.selling_aggression, 3)
             if current_price >= selling_price:

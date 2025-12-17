@@ -1,23 +1,26 @@
 class GovTax:
-    def collect_taxes(self, gov):
+    def __init__(self, gov):
+        self.gov = gov
+
+    def collect_taxes(self):
         tax_collected_in_step = 0
 
-        for agent in gov.model.schedule.agents:
-            if agent.wealth > gov.tax_threshold / (1 - gov.tax_rate):
-                tax_amount = agent.wealth * gov.tax_rate
+        for agent in self.gov.model.agents:
+            if agent.wealth > self.gov.tax_threshold / (1 - self.gov.tax_rate):
+                tax_amount = agent.wealth * self.gov.tax_rate
                 agent.wealth -= tax_amount
-                gov.treasury += tax_amount
+                self.gov.treasury += tax_amount
                 tax_collected_in_step += tax_amount
 
-        gov.total_tax_collected += tax_collected_in_step
+        self.gov.total_tax_collected += tax_collected_in_step
 
-    def adjust_tax_rate(self, gov):
-        min_tax_rate = gov.tax_min_rate
-        max_tax_rate = gov.tax_max_rate
-        adj_tax_rate = gov.tax_adj_rate
+    def adjust_tax_rate(self):
+        min_tax_rate = self.gov.tax_min_rate
+        max_tax_rate = self.gov.tax_max_rate
+        adj_tax_rate = self.gov.tax_adj_rate
 
-        if gov.treasury < gov.treasury_min:
-            gov.tax_rate = min(max_tax_rate, gov.tax_rate + adj_tax_rate)
+        if self.gov.treasury < self.gov.treasury_min:
+            self.gov.tax_rate = min(max_tax_rate, self.gov.tax_rate + adj_tax_rate)
 
-        elif gov.treasury > gov.treasury_max:
-            gov.tax_rate = max(min_tax_rate, gov.tax_rate - adj_tax_rate)
+        elif self.gov.treasury > self.gov.treasury_max:
+            self.gov.tax_rate = max(min_tax_rate, self.gov.tax_rate - adj_tax_rate)

@@ -1,6 +1,8 @@
 from mesa import Agent
-from agent_consume import AgentConsumeLogic
-from agent_travel import AgentTravel
+
+from core.agents.base.agent_consume import AgentConsumeLogic
+from core.agents.base.agent_travel import AgentTravel
+from core.agents.base.agent_hp import AgentHP
 
 
 class BaseAgent(Agent):
@@ -17,15 +19,19 @@ class BaseAgent(Agent):
         base_vars = model.base_variables
 
         self.hp = base_vars.get("initial_hp", 100)
-        self.hp_change_food = base_vars.get("hp_starve_penalty", 0)
+        self.hp_min_margin = base_vars.get("hp_min_margin", 20)
+        self.hp_starve_penalty = base_vars.get("hp_starve_penalty", 5)
+        self.hp_move_penalty = base_vars.get("hp_move_penalty", 2)
 
         self.personal_food_supply = base_vars.get("personal_food_supply", 0)
+
         self.food_consumption_rate = base_vars.get("food_consumption_rate", 1)
         self.travel_food_cost = base_vars.get("travel_food_cost", 0.0)
         self.replenishment_buffer = base_vars.get("replenishment_buffer", 0)
 
         self.consume_logic = AgentConsumeLogic(self)
         self.travel_logic = AgentTravel(self)
+        self.hp_logic = AgentHP(self)
 
     def update_agent_config(self):
         base_vars = self.model.base_variables
@@ -38,10 +44,16 @@ class BaseAgent(Agent):
 
     def step(self):
         self.update_agent_config()
-        if self.hp > 0:
-            self.age += 1
-            if not self.consume_logic.consume():
-                return
-            pass
-        else:
+
+        if self.hp_logic.death_check():
             self.alive = False
+            return
+
+        self.age += 1
+
+        if not self.consume_logic.consume():
+            if self.hp_logic.death_check():
+                self.alive = False
+                return
+
+        pass

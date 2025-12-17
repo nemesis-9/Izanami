@@ -45,7 +45,7 @@ class GlobalConfig:
             if key == agent_type:
                 buy_list = [key for key in values.get('buying_power', {}).keys()]
                 sell_list = [key for key in values.get('selling_power', {}).keys()]
-                result[key] = {
+                result = {
                     'buy': buy_list,
                     'sell': sell_list
                 }

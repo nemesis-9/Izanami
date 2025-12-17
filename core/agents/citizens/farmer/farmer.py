@@ -1,9 +1,9 @@
 from core.agents.base.agent import BaseAgent
 from core.agents.base.agent_trade import AgentTrade
 
-from farmer_produce import FarmerProduce
-from farmer_sell import FarmerSell
-from farmer_travel import FarmerTravel
+from core.agents.citizens.farmer.farmer_produce import FarmerProduce
+from core.agents.citizens.farmer.farmer_sell import FarmerSell
+from core.agents.citizens.farmer.farmer_travel import FarmerTravel
 
 
 class Farmer(BaseAgent):
@@ -12,6 +12,7 @@ class Farmer(BaseAgent):
 
         self.food_production_rate = self.random.randrange(3, 7)
 
+        self.inventory = {}
         self.has_farm_plot = True
         self.path = None
 

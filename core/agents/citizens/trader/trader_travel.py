@@ -1,5 +1,9 @@
-class TraderTravel:
+from core.agents.base.agent_travel import AgentTravel
+
+
+class TraderTravel(AgentTravel):
     def __init__(self, trader):
+        super().__init__(trader)
         self.trader = trader
 
     def move(self):
