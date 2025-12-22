@@ -38,6 +38,10 @@ class AgentConsumeLogic:
             self.agent.personal_food_supply -= self.food_needed
             return True
 
+        elif self.agent.inventory.get('food', 0) >= self.food_needed:
+            self.agent.inventory['food'] = self.agent.inventory['food'] - self.food_needed
+            return True
+
         else:
             buying_foods = self.buy_foods()
             if buying_foods:

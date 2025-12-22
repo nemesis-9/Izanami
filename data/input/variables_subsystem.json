@@ -12,10 +12,10 @@
     },
 
     "price_elasticities": {
-      "food": 0.005,
+      "food": 0.001,
       "iron": 0.002,
-      "copper": 0.007,
-      "gold": 0.01
+      "copper": 0.003,
+      "gold": 0.006
     },
 
     "minimum_threshold": {
@@ -53,7 +53,7 @@
     "treasury_min": 1000,
     "treasury_max": 50000,
 
-    "tax_rate": 0.05,
+    "tax_rate": 0.03,
     "tax_min_rate": 0.01,
     "tax_max_rate": 0.3,
     "tax_adj_rate": 0.01,
@@ -65,7 +65,7 @@
     },
     "aid_amount":
     {
-      "food": 4
+      "food": 10
     },
     "aid_price_margin":
     {
@@ -73,7 +73,7 @@
     },
     "aid_thresholds":
     {
-      "wealth": 6,
+      "wealth": 15,
       "food": 4
     }
   }

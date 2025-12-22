@@ -4,7 +4,7 @@
       "initial_hp": 100,
       "hp_min_margin" : 30,
       "hp_starve_penalty": 20,
-      "hp_move_penalty": 5,
+      "hp_move_penalty": 2,
 
       "food_consumption_rate": 1,
       "personal_food_supply": 20,
@@ -16,7 +16,7 @@
   "farmer_variables":
   {
       "surplus_threshold": 5,
-      "survival_buffer": 15
+      "survival_buffer": 25
   },
   
   "trader_variables":

@@ -145,5 +145,5 @@ class CityModel(Model):
 
         self.datacollector.collect(self)
 
-        self.steps += 1
-        print(f"  City Step {self.steps}: Food Pool = {self.economy.resource_pools.get('food')}")
+        # self.steps += 1
+        print(f"  City Step {self.steps}: Living Agents = {len(self.agents)}")

@@ -8,12 +8,12 @@ from core.models.city import CityModel
 from core.data_collectors.reporter_agent import reporter_agent
 from core.data_collectors.reporter_model import reporter_model
 
-CURRENT_PHASE = 6
+CURRENT_PHASE = 6.1
 
 if __name__ == '__main__':
     print("--- Starting City Simulation Test ---")
 
-    NUM_FARMERS = 15
+    NUM_FARMERS = 25
     NUM_TRADERS = 5
     NUM_CRAFTERS = 5
     NUM_STEPS = 50
