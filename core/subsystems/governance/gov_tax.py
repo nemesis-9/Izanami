@@ -6,8 +6,9 @@ class GovTax:
         tax_collected_in_step = 0
 
         for agent in self.gov.model.agents:
-            if agent.wealth > self.gov.tax_threshold / (1 - self.gov.tax_rate):
-                tax_amount = agent.wealth * self.gov.tax_rate
+            if agent.wealth > self.gov.tax_threshold:
+                taxable_wealth = agent.wealth - self.gov.tax_threshold
+                tax_amount = taxable_wealth * self.gov.tax_rate
                 agent.wealth -= tax_amount
                 self.gov.treasury += tax_amount
                 tax_collected_in_step += tax_amount

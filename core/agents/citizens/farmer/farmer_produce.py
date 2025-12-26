@@ -4,4 +4,4 @@ class FarmerProduce:
 
     def produce(self):
         production_amount = self.farmer.food_production_rate
-        self.farmer.personal_food_supply += production_amount
+        self.farmer.inventory["food"] = self.farmer.inventory.get("food", 0) + production_amount

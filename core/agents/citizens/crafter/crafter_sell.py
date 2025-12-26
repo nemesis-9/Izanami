@@ -22,37 +22,33 @@ class CrafterSell:
             )
         ]
 
-        if not selling_resources:
-            return False
-        return selling_resources
+        return selling_resources or False
 
     def sell_goods(self):
+
+        selling_resources = self.need_to_sell()
+        if not selling_resources:
+            return None
+
         market = self.crafter.model.city_network.points_of_interest["market"]
         market_goods = location_config['market']
 
         city_center = self.crafter.model.city_network.points_of_interest["city_center"]
         city_center_goods = location_config['city_center']
 
-        selling_resources = self.need_to_sell()
-        if not selling_resources:
-            self.crafter.toggle_mode()
-            return
-
         sell_candidates = []
         for resource in selling_resources:
             current_price = self.crafter.model.economy.calculate_price(resource)
             sell_candidates.append((resource, current_price))
+
         sell_candidates.sort(key=lambda x: x[1], reverse=True)
 
         final_list = []
-
         for resource, current_price in sell_candidates:
-            if sum(self.crafter.inventory.values()) <= 0:
-                break
-
-            if resource in market_goods and self.crafter.pos != market:
-                continue
-            if resource in city_center_goods and self.crafter.pos != city_center:
+            if (
+                    (self.crafter.pos == city_center and resource not in city_center_goods)
+                    or (self.crafter.pos == market and resource not in market_goods)
+            ):
                 continue
 
             quantity = min(self.crafter.inventory.get(resource, 0), self.crafter.selling_power.get(resource, 0))
@@ -60,4 +56,4 @@ class CrafterSell:
             if quantity > 0:
                 final_list.append((resource, quantity))
 
-        return final_list
+        return final_list or None

@@ -6,29 +6,25 @@ class TraderTravel(AgentTravel):
         super().__init__(trader)
         self.trader = trader
 
-    def move(self):
+    def get_nearest_destination(self, destinations):
+        if not destinations:
+            return None
+
         current_pos = self.trader.pos
 
-        market = self.trader.model.city_network.points_of_interest["market"]
-        city_center = self.trader.model.city_network.points_of_interest["city_center"]
+        def manhattan(a, b):
+            return abs(a[0] - b[0]) + abs(a[1] - b[1])
 
-        if self.trader.mode == 'selling':
-            selling_resources = self.trader.selling_logic.need_to_sell()
-            if not selling_resources:
-                self.trader.toggle_mode()
-            else:
-                self.trader.destination = market
+        return min(destinations, key=lambda d: manhattan(current_pos, d))
 
-        elif self.trader.mode == 'buying':
-            buying_resources = self.trader.buying_logic.need_to_buy()
-            if not buying_resources:
-                self.trader.toggle_mode()
-            else:
-                self.trader.destination = city_center
+    def move(self):
+        if not self.trader.destination:
+            return False
 
-        else:
-            self.trader.destination = self.trader.home_location
+        if self.trader.destination != self.trader.pos:
+            return self.trader.execute_pathfinding_move(
+                self.trader.pos,
+                self.trader.destination
+            )
 
-        if self.trader.destination and self.trader.destination != self.trader.pos:
-            return self.trader.execute_pathfinding_move(current_pos, self.trader.destination)
         return False

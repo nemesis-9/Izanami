@@ -3,9 +3,10 @@ reporter_model = {
     "CurrentSeason": lambda m: m.current_season,
     "TotalAgents": lambda m: len(m.agents),
 
+    "Count_Agro": lambda m: len([a for a in m.agents if a.agent_type == 'agro']),
+    "Count_Crafter": lambda m: len([a for a in m.agents if a.agent_type == 'crafter']),
     "Count_Farmer": lambda m: len([a for a in m.agents if a.agent_type == 'farmer']),
     "Count_Trader": lambda m: len([a for a in m.agents if a.agent_type == 'trader']),
-    "Count_Crafter": lambda m: len([a for a in m.agents if a.agent_type == 'crafter']),
 
     "TotalWealth": lambda m: round(sum(a.wealth for a in m.agents), 2),
     "EconomyWealth": lambda m: round(m.economy.wealth, 2),

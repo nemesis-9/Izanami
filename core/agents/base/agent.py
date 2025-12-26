@@ -23,8 +23,6 @@ class BaseAgent(Agent):
         self.hp_starve_penalty = base_vars.get("hp_starve_penalty", 5)
         self.hp_move_penalty = base_vars.get("hp_move_penalty", 2)
 
-        self.personal_food_supply = base_vars.get("personal_food_supply", 0)
-
         self.food_consumption_rate = base_vars.get("food_consumption_rate", 1)
         self.travel_food_cost = base_vars.get("travel_food_cost", 0.0)
         self.replenishment_buffer = base_vars.get("replenishment_buffer", 0)
@@ -46,14 +44,15 @@ class BaseAgent(Agent):
         self.update_agent_config()
 
         if self.hp_logic.death_check():
-            self.alive = False
             return
 
         self.age += 1
 
-        if not self.consume_logic.consume():
-            if self.hp_logic.death_check():
-                self.alive = False
-                return
+        self.consume_logic.consume()
+        if self.hp_logic.death_check():
+            return
 
-        pass
+        if hasattr(self, 'destination') and self.destination:
+            self.travel_logic.pathfinding_move(self.location, self.destination)
+
+        self.hp_logic.death_check()

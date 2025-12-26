@@ -24,6 +24,7 @@ class Governance:
 
         self.aid_fund = governance_variables.get('aid_fund', {})
         self.aid_amount = governance_variables.get('aid_amount', {})
+        self.aid_max_per_agent = governance_variables.get('aid_max_per_agent', {})
         self.aid_price_margin = governance_variables.get('aid_price_margin', {})
         self.aid_threshold = governance_variables.get('aid_threshold', {})
 

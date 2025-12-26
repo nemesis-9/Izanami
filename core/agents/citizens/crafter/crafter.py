@@ -6,6 +6,7 @@ from core.agents.citizens.crafter.crafter_buy import CrafterBuy
 from core.agents.citizens.crafter.crafter_sell import CrafterSell
 from core.agents.citizens.crafter.crafter_travel import CrafterTravel
 from core.agents.citizens.crafter.crafter_craft import CrafterCraft
+from core.agents.citizens.crafter.crafter_utility import CrafterUtility
 
 
 class Crafter(BaseAgent):
@@ -19,13 +20,14 @@ class Crafter(BaseAgent):
         self.path = None
         self.home_location = None
         self.destination = None
-        self.mode = 'crafting'
+        self.action = 'idle'
 
         self.trade = AgentTrade(self)
         self.buying_logic = CrafterBuy(self)
         self.selling_logic = CrafterSell(self)
         self.travel_logic = CrafterTravel(self)
         self.crafting_logic = CrafterCraft(self)
+        self.utility = CrafterUtility(self)
 
         self.max_inventory = initial_crafter_config.get("max_inventory", 0)
         self.buying_power = initial_crafter_config.get("buying_power", {})
@@ -42,16 +44,6 @@ class Crafter(BaseAgent):
         self.inventory_margin = crafter_vars.get("inventory_margin", 0)
         self.wealth_margin = crafter_vars.get("wealth_margin", 0)
 
-    def toggle_mode(self):
-        if self.mode == 'buying':
-            self.mode = 'crafting'
-        elif self.mode == 'crafting':
-            self.mode = 'selling'
-        elif self.mode == 'selling':
-            self.mode = 'buying'
-        else:
-            self.mode = 'crafting'
-
     def move(self):
         return self.travel_logic.move()
 
@@ -60,18 +52,11 @@ class Crafter(BaseAgent):
         if buying_resources:
             self.trade.buy_goods(buying_resources)
 
-        if (
-                sum(self.inventory.values()) >= self.max_inventory * self.inventory_margin
-                or self.wealth < self.wealth_margin
-        ):
-            self.toggle_mode()
-
     def sell_goods(self):
         selling_resources = self.selling_logic.sell_goods()
         if selling_resources:
             self.trade.sell_goods(selling_resources)
 
-    # Craft function
     def craft(self):
         return self.crafting_logic.craft()
 
@@ -80,16 +65,29 @@ class Crafter(BaseAgent):
         if not self.alive:
             return
 
+        self.update_agent_config()
+
+        self.action = self.utility.decide_action()
+
         market = self.model.city_network.points_of_interest["market"]
         city_center = self.model.city_network.points_of_interest["city_center"]
 
-        self.update_agent_config()
-        is_moving = self.move()
+        if self.action == "sell":
+            self.destination = city_center
+        elif self.action == "buy":
+            self.destination = market
+        elif self.action == "craft":
+            self.destination = self.home_location
+        else:
+            self.destination = None
 
-        if not is_moving:
-            if self.pos == market:
-                self.buy_materials()
-            elif self.pos == city_center:
-                self.sell_goods()
-            elif self.pos == self.home_location:
-                self.craft()
+        is_moving = self.travel_logic.move()
+        if is_moving:
+            return
+
+        if self.action == 'buy' and self.pos == market:
+            self.buy_materials()
+        elif self.action == 'sell' and self.pos == city_center:
+            self.sell_goods()
+        elif self.action == 'craft' and self.pos == self.home_location:
+            self.craft()

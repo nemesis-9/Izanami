@@ -8,24 +8,26 @@ from core.models.city import CityModel
 from core.data_collectors.reporter_agent import reporter_agent
 from core.data_collectors.reporter_model import reporter_model
 
-CURRENT_PHASE = 6.1
+CURRENT_PHASE = 7
 
 if __name__ == '__main__':
     print("--- Starting City Simulation Test ---")
 
-    NUM_FARMERS = 25
-    NUM_TRADERS = 5
+    NUM_AGRO = 5
     NUM_CRAFTERS = 5
-    NUM_STEPS = 50
+    NUM_FARMERS = 10
+    NUM_TRADERS = 5
+    NUM_STEPS = 100
 
     world = WorldModel(
         cities=1,
         seasons=['spring', 'summer', 'autumn', 'winter'],
-        width=100,
-        height=100,
+        width=20,
+        height=20,
+        agro=NUM_AGRO,
+        crafters=NUM_CRAFTERS,
         farmers=NUM_FARMERS,
         traders=NUM_TRADERS,
-        crafters=NUM_CRAFTERS,
         model_reporters=reporter_model,
         agent_reporters=reporter_agent
     )

@@ -5,6 +5,7 @@ from core.agents.base.agent_trade import AgentTrade
 from core.agents.citizens.trader.trader_buy import TraderBuy
 from core.agents.citizens.trader.trader_sell import TraderSell
 from core.agents.citizens.trader.trader_travel import TraderTravel
+from core.agents.citizens.trader.trader_utility import TraderUtility
 
 
 class Trader(BaseAgent):
@@ -12,17 +13,17 @@ class Trader(BaseAgent):
         super().__init__(model, wealth, "trader")
 
         self.inventory = {"food": 2}
-
-        self.path = None
+        self.action = 'idle'
 
         self.home_location = None
         self.destination = None
-        self.mode = 'selling'
+        self.path = None
 
         self.trade = AgentTrade(self)
         self.buying_logic = TraderBuy(self)
         self.selling_logic = TraderSell(self)
         self.travel_logic = TraderTravel(self)
+        self.utility = TraderUtility(self)
 
         self.max_inventory = initial_trader_config.get("max_inventory", 0)
         self.buying_power = initial_trader_config.get("buying_power", {})
@@ -43,12 +44,6 @@ class Trader(BaseAgent):
         self.inventory_margin = trader_vars.get("inventory_margin", 0)
         self.wealth_margin = trader_vars.get("wealth_margin", 0)
 
-    def toggle_mode(self):
-        if self.mode == 'selling':
-            self.mode = 'buying'
-        elif self.mode == 'buying':
-            self.mode = 'selling'
-
     def move(self):
         return self.travel_logic.move()
 
@@ -57,32 +52,37 @@ class Trader(BaseAgent):
         if buying_resources:
             self.trade.buy_goods(buying_resources)
 
-        if (
-                sum(self.inventory.values()) >= self.max_inventory * self.inventory_margin
-                or self.wealth < self.wealth_margin
-        ):
-            self.toggle_mode()
-
     def sell_goods(self):
         selling_resources = self.selling_logic.sell_goods()
         if selling_resources:
             self.trade.sell_goods(selling_resources)
+
+    def toggle_destination(self, market, city_center):
+        self.destination = city_center if self.pos == market else market
 
     def step(self):
         super().step()
         if not self.alive:
             return
 
+        self.update_agent_config()
+
+        self.action = self.utility.decide_action()
+
         market = self.model.city_network.points_of_interest["market"]
         city_center = self.model.city_network.points_of_interest["city_center"]
 
-        self.update_agent_config()
-        is_moving = self.move()
+        if self.action in ("buy", "sell"):
+            self.destination = self.travel_logic.get_nearest_destination(
+                [market, city_center]
+            )
+        else:
+            self.destination = None
 
-        if not is_moving:
-            if self.pos == market:
-                self.sell_goods()
-                self.buy_goods()
-            elif self.pos == city_center:
-                self.sell_goods()
-                self.buy_goods()
+        if self.travel_logic.move():
+            return
+
+        if self.action == "buy":
+            self.buy_goods()
+        elif self.action == "sell":
+            self.sell_goods()

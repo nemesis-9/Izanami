@@ -24,12 +24,16 @@ class EconomyPrice:
         base_price = self.econ.base_prices.get(resource, 0)
         price_elasticity = self.econ.price_elasticities.get(resource, 0)
         minimum_threshold = self.econ.minimum_threshold.get(resource, 0)
+        maximum_threshold = self.econ.maximum_threshold.get(resource, 0)
         target_supply = self.econ.target_supply.get(resource, 1000)
 
         new_price = self.new_price_formula(base_price, resource_pool, price_elasticity, target_supply)
 
         # minimum threshold
-        final_price = max(minimum_threshold, new_price)
+        temp_final_price = max(minimum_threshold, new_price)
+
+        # maximum threshold
+        final_price = min(maximum_threshold, temp_final_price)
 
         return final_price
 

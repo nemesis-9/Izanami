@@ -3,42 +3,42 @@
   {
       "initial_hp": 100,
       "hp_min_margin" : 30,
-      "hp_starve_penalty": 20,
+      "hp_starve_penalty": 5,
       "hp_move_penalty": 2,
 
       "food_consumption_rate": 1,
-      "personal_food_supply": 20,
-      "travel_food_cost": 0.1,
+      "travel_food_cost": 0.05,
   
-      "replenishment_buffer": 5
+      "replenishment_buffer": 6
   },
   
   "farmer_variables":
   {
+      "max_inventory": 30,
       "surplus_threshold": 5,
       "survival_buffer": 25
   },
   
   "trader_variables":
   {
-      "max_inventory": 30,
-      "buying_aggression": 0.95,
-      "selling_aggression": 1.05,
-      "inventory_margin": 0.9,
-      "wealth_margin": 10,
+      "max_inventory": 50,
+      "inventory_margin": 0.85,
+      "wealth_margin": 25,
+      "buying_aggression": 0.90,
+      "selling_aggression": 1.10,
       "buying_power":
       {
-        "food": 10,
-        "sword": 3,
-        "shield": 3,
-        "gold": 15
+        "food": 15,
+        "sword": 5,
+        "shield": 5,
+        "gold": 10
       },
       "selling_power":
       {
-        "food": 10,
-        "sword": 3,
-        "shield": 3,
-        "gold": 5
+        "food": 15,
+        "sword": 5,
+        "shield": 5,
+        "gold": 10
       }
   },
 
@@ -59,6 +59,21 @@
       {
         "sword": 2,
         "shield": 1
+      }
+  },
+
+  "agro_variables":
+  {
+    "max_inventory": 500,
+    "personal_minimum": 12,
+    "selling_margin": 150,
+    "selling_cap": 0.9,
+    "emergency_margin": 100,
+    "max_harvest_progress": 5,
+    "spoilage_rate": 0.02,
+    "selling_power":
+      {
+        "food": 1.1
       }
   }
 }

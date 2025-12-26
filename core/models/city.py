@@ -4,9 +4,10 @@ from mesa.space import MultiGrid
 from core.subsystems.economy.economy import Economy
 from core.subsystems.governance.governance import Governance
 
+from core.agents.citizens.agro.agro import Agro
+from core.agents.citizens.crafter.crafter import Crafter
 from core.agents.citizens.farmer.farmer import Farmer
 from core.agents.citizens.trader.trader import Trader
-from core.agents.citizens.crafter.crafter import Crafter
 
 from core.spaces.city_network import CityNetwork
 
@@ -25,7 +26,7 @@ class CityModel(Model):
             self, unique_id, parent_world,
             seasons, season_length=25,
             width=100, height=100,
-            farmers=5, traders=5, crafters=5,
+            agro=2, crafters=5, farmers=5, traders=5,
             model_reporters=None, agent_reporters=None
     ):
         super().__init__()
@@ -42,9 +43,10 @@ class CityModel(Model):
         self.running = True
 
         self.base_variables = agent_config.agent_var("base", self.current_season)
+        self.agro_variables = agent_config.agent_var("agro", self.current_season)
+        self.crafter_variables = agent_config.agent_var("crafter", self.current_season)
         self.farmer_variables = agent_config.agent_var("farmer", self.current_season)
         self.trader_variables = agent_config.agent_var("trader", self.current_season)
-        self.crafter_variables = agent_config.agent_var("crafter", self.current_season)
 
         economy_variables = subsystem_config.subsystem_var('economy', self.current_season)
         governance_variables = subsystem_config.subsystem_var('governance', self.current_season)
@@ -64,19 +66,11 @@ class CityModel(Model):
 
         #  --- Agent Initialization ---
 
-        for i in range(farmers):
-            agent = Farmer(
+        for i in range(agro):
+            agent = Agro(
                 self,
-                wealth=self.random.randrange(50, 200),
-                initial_farmer_config=self.farmer_variables
-            )
-            self._register_agent(agent)
-
-        for i in range(traders):
-            agent = Trader(
-                self,
-                wealth=self.random.randrange(100, 500),
-                initial_trader_config=self.trader_variables
+                wealth=self.random.randrange(50, 100),
+                initial_agro_config=self.agro_variables
             )
             self._register_agent(agent)
             agent.home_location = agent.pos
@@ -86,6 +80,24 @@ class CityModel(Model):
                 self,
                 wealth=self.random.randrange(100, 500),
                 initial_crafter_config=self.crafter_variables
+            )
+            self._register_agent(agent)
+            agent.home_location = agent.pos
+
+        for i in range(farmers):
+            agent = Farmer(
+                self,
+                wealth=self.random.randrange(50, 200),
+                initial_farmer_config=self.farmer_variables
+            )
+            self._register_agent(agent)
+            agent.home_location = agent.pos
+
+        for i in range(traders):
+            agent = Trader(
+                self,
+                wealth=self.random.randrange(100, 500),
+                initial_trader_config=self.trader_variables
             )
             self._register_agent(agent)
             agent.home_location = agent.pos

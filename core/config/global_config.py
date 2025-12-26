@@ -50,3 +50,8 @@ class GlobalConfig:
                     'sell': sell_list
                 }
         return result
+
+
+# global_config = GlobalConfig().get()
+# crafter_config = global_config.agent_item_list('crafter')
+# print(f"crafter config: {crafter_config}")

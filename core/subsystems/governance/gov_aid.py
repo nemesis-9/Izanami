@@ -31,20 +31,26 @@ class GovAid:
                 continue
 
             resource_threshold = self.gov.aid_threshold.get(resource, 0)
+            max_per_agent = self.gov.aid_max_per_agent.get(resource, float('inf'))
 
-            total_needed_list = []
-
+            eligible_recipients = []
             for agent in agents_in_need:
-                amount_needed = resource_threshold - agent.inventory.get(resource, 0)
-                if amount_needed > 0:
-                    total_needed_list.append((agent, amount_needed))
+                current_inv = agent.inventory.get(resource, 0)
+                if current_inv < resource_threshold:
+                    needed = resource_threshold - current_inv
+                    eligible_recipients.append((agent, needed))
 
-            total_needed_list.sort(key=lambda x: x[1], reverse=True)
+            if not eligible_recipients:
+                continue
 
-            for agent, required_amount in total_needed_list:
-                if self.gov.aid_fund.get(resource, 0) <= 0:
+            eligible_recipients.sort(key=lambda x: x[1], reverse=True)
+
+            for agent, amount_needed in eligible_recipients:
+                if available_aid <= 0:
                     break
-                amount_to_give = min(required_amount, available_aid)
-                agent.inventory[resource] = agent.inventory[resource] + amount_to_give
-                self.gov.aid_fund[resource] -= amount_to_give
-                available_aid -= amount_to_give
+
+                allowed_amount = min(amount_needed, max_per_agent, available_aid)
+
+                agent.inventory[resource] = agent.inventory.get(resource, 0) + allowed_amount
+                self.gov.aid_fund[resource] -= allowed_amount
+                available_aid -= allowed_amount

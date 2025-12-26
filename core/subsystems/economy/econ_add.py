@@ -4,7 +4,7 @@ class EconomyAdd:
 
     def affordance(self):
         affordable_cost = self.econ.wealth * self.econ.wealth_margin
-        return affordable_cost
+        return max(0, affordable_cost)
 
     def add_resource(self, resource_name, amount):
         if amount <= 0:
@@ -15,7 +15,7 @@ class EconomyAdd:
         affordable_cost = self.affordance()
 
         if total_cost > affordable_cost:
-            affordable_amount = int(affordable_cost / current_price)
+            affordable_amount = max(0, int(affordable_cost / current_price))
         else:
             affordable_amount = amount
 

@@ -16,6 +16,7 @@ class Economy:
         self.base_prices = economy_variables.get("base_prices", {})
         self.price_elasticities = economy_variables.get("price_elasticities", {})
         self.minimum_threshold = economy_variables.get("minimum_threshold", {})
+        self.maximum_threshold = economy_variables.get("maximum_threshold", {})
         self.target_supply = economy_variables.get("target_supply", {})
 
         self.price_logic = EconomyPrice(self)

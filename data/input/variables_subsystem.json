@@ -2,7 +2,7 @@
   "economy":
   {
     "wealth": 500,
-    "wealth_margin": 100,
+    "wealth_margin": 0.1,
     "base_prices":
     {
       "food": 2.0,
@@ -12,10 +12,10 @@
     },
 
     "price_elasticities": {
-      "food": 0.001,
-      "iron": 0.002,
-      "copper": 0.003,
-      "gold": 0.006
+      "food": 0.1,
+      "iron": 0.2,
+      "copper": 0.3,
+      "gold": 0.5
     },
 
     "minimum_threshold": {
@@ -23,6 +23,13 @@
       "iron": 0.2,
       "copper": 0.2,
       "gold": 0.1
+    },
+
+    "maximum_threshold": {
+      "food": 6.0,
+      "iron": 12.0,
+      "copper": 15.0,
+      "gold": 100.0
     },
 
     "target_supply": {
@@ -55,26 +62,29 @@
 
     "tax_rate": 0.03,
     "tax_min_rate": 0.01,
-    "tax_max_rate": 0.3,
+    "tax_max_rate": 0.15,
     "tax_adj_rate": 0.01,
     "tax_threshold": 5.0,
 
     "aid_fund":
     {
-      "food": 40
+      "food": 100
     },
     "aid_amount":
     {
-      "food": 10
+      "food": 20
+    },
+    "aid_max_per_agent": {
+      "food": 5
     },
     "aid_price_margin":
     {
       "food": 0.5
     },
-    "aid_thresholds":
+    "aid_threshold":
     {
-      "wealth": 15,
-      "food": 4
+      "wealth": 45,
+      "food": 10
     }
   }
 }
