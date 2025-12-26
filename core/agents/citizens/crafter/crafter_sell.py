@@ -51,7 +51,12 @@ class CrafterSell:
             ):
                 continue
 
-            quantity = min(self.crafter.inventory.get(resource, 0), self.crafter.selling_power.get(resource, 0))
+            excess = (
+                    self.crafter.inventory.get(resource, 0)
+                    - self.crafter.selling_power.get(resource, 0)
+            )
+
+            quantity = max(0, excess)
 
             if quantity > 0:
                 final_list.append((resource, quantity))

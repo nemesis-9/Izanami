@@ -12,14 +12,14 @@ reporter_model = {
     "EconomyWealth": lambda m: round(m.economy.wealth, 2),
 
     "FoodPool": lambda m: m.economy.resource_pools.get("food", 0),
-    "IronPool": lambda m: m.economy.resource_pools.get("food", 0),
-    "CopperPool": lambda m: m.economy.resource_pools.get("food", 0),
-    "GoldPool": lambda m: m.economy.resource_pools.get("food", 0),
+    "IronPool": lambda m: m.economy.resource_pools.get("iron", 0),
+    "CopperPool": lambda m: m.economy.resource_pools.get("copper", 0),
+    "GoldPool": lambda m: m.economy.resource_pools.get("gold", 0),
 
-    "FoodPrice": lambda m: round(m.economy.calculate_price("food"), 0),
-    "IronPrice": lambda m: round(m.economy.calculate_price("food"), 0),
-    "CopperPrice": lambda m: round(m.economy.calculate_price("food"), 0),
-    "GoldPrice": lambda m: round(m.economy.calculate_price("food"), 0),
+    "FoodPrice": lambda m: round(m.economy.calculate_price("food"), 2),
+    "IronPrice": lambda m: round(m.economy.calculate_price("iron"), 2),
+    "CopperPrice": lambda m: round(m.economy.calculate_price("copper"), 2),
+    "GoldPrice": lambda m: round(m.economy.calculate_price("gold"), 2),
 
     "Treasury": lambda m: round(m.governance.treasury, 2),
     "TotalTaxCollected": lambda m: round(m.governance.total_tax_collected, 2),

@@ -78,7 +78,7 @@ class CityModel(Model):
         for i in range(crafters):
             agent = Crafter(
                 self,
-                wealth=self.random.randrange(100, 500),
+                wealth=self.random.randrange(50, 100),
                 initial_crafter_config=self.crafter_variables
             )
             self._register_agent(agent)
@@ -87,7 +87,7 @@ class CityModel(Model):
         for i in range(farmers):
             agent = Farmer(
                 self,
-                wealth=self.random.randrange(50, 200),
+                wealth=self.random.randrange(50, 100),
                 initial_farmer_config=self.farmer_variables
             )
             self._register_agent(agent)
@@ -96,7 +96,7 @@ class CityModel(Model):
         for i in range(traders):
             agent = Trader(
                 self,
-                wealth=self.random.randrange(100, 500),
+                wealth=self.random.randrange(100, 300),
                 initial_trader_config=self.trader_variables
             )
             self._register_agent(agent)

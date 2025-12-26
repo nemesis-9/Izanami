@@ -1,79 +1,86 @@
 {
   "base_variables":
   {
-      "initial_hp": 100,
-      "hp_min_margin" : 30,
-      "hp_starve_penalty": 5,
-      "hp_move_penalty": 2,
+    "initial_hp": 100,
+    "hp_min_margin" : 35,
+    "hp_starve_penalty": 10,
+    "hp_move_penalty": 0.5,
 
-      "food_consumption_rate": 1,
-      "travel_food_cost": 0.05,
-  
-      "replenishment_buffer": 6
+    "food_consumption_rate": 1.2,
+    "travel_food_cost": 0.15,
+
+    "replenishment_buffer": 10
   },
-  
-  "farmer_variables":
-  {
-      "max_inventory": 30,
-      "surplus_threshold": 5,
-      "survival_buffer": 25
-  },
-  
+
   "trader_variables":
   {
-      "max_inventory": 50,
-      "inventory_margin": 0.85,
-      "wealth_margin": 25,
-      "buying_aggression": 0.90,
-      "selling_aggression": 1.10,
-      "buying_power":
-      {
-        "food": 15,
-        "sword": 5,
-        "shield": 5,
-        "gold": 10
-      },
-      "selling_power":
-      {
-        "food": 15,
-        "sword": 5,
-        "shield": 5,
-        "gold": 10
-      }
+    "max_inventory": 80,
+    "inventory_margin": 0.65,
+    "wealth_margin": 120,
+    "buying_aggression": 0.7,
+    "selling_aggression": 1.2,
+    "buying_power":
+    {
+      "food": 25,
+      "sword": 4,
+      "shield": 4,
+      "gold": 8
+    },
+    "selling_power":
+    {
+      "food": 10,
+      "sword": 2,
+      "shield": 2,
+      "gold": 4
+    }
   },
 
   "crafter_variables":
   {
-      "max_inventory": 30,
-      "inventory_margin": 0.7,
-      "wealth_margin": 10,
-      "high_inventory_threshold": 0.8,
-      "low_wealth_threshold": 2,
-      "buying_power":
+    "max_inventory": 55,
+    "inventory_margin": 0.6,
+    "wealth_margin": 35,
+    "high_inventory_threshold": 0.7,
+    "low_wealth_threshold": 12,
+    "buying_power":
+    {
+      "iron": 8,
+      "copper": 10,
+      "gold": 2
+    },
+    "selling_power":
+    {
+      "sword": 1,
+      "shield": 1
+    }
+  },
+
+  "farmer_variables":
+  {
+    "max_inventory": 70,
+    "personal_minimum": 14,
+    "selling_margin": 12,
+    "selling_cap": 0.85,
+    "max_harvest_progress": 4,
+    "spoilage_rate": 0.06,
+    "selling_power":
       {
-        "iron": 10,
-        "copper": 15,
-        "gold": 5
-      },
-      "selling_power":
-      {
-        "sword": 2,
-        "shield": 1
+        "food": 1.0
       }
   },
 
   "agro_variables":
   {
-    "max_inventory": 500,
-    "personal_minimum": 12,
-    "selling_margin": 150,
-    "selling_cap": 0.9,
-    "emergency_margin": 100,
-    "max_harvest_progress": 5,
-    "spoilage_rate": 0.02,
+    "max_inventory": 450,
+    "personal_minimum": 25,
+    "selling_margin": 50,
+    "selling_cap": 0.8,
+    "emergency_margin": 70,
+    "max_harvest_progress": 6,
+    "spoilage_rate": 0.07,
     "selling_power":
       {
-        "food": 1.1
+        "food": 1.15
       }
   }
 }

@@ -6,26 +6,40 @@ class FarmerUtility:
     def clamp01(x: float) -> float:
         return max(0.0, min(1.0, x))
 
+    def inventory_ratio(self) -> float:
+        max_inv = max(1, self.farmer.max_inventory)
+        current = sum(self.farmer.inventory.values())
+        return self.clamp01(current / max_inv)
+
+    def food_surplus_ratio(self) -> float:
+        food = self.farmer.inventory.get("food", 0)
+        surplus = max(0, food - self.farmer.personal_minimum)
+        return self.clamp01(surplus / max(1, self.farmer.selling_margin))
+
     def produce_utility(self) -> float:
-        ratio = self.farmer.personal_food_supply / max(1, self.farmer.surplus_threshold)
-        return self.clamp01(1.0 - ratio)
+        if not self.farmer.has_farm_plot:
+            return 0.0
+
+        inv_ratio = self.inventory_ratio()
+        base = (1.0 - inv_ratio)
+
+        if self.farmer.pos != self.farmer.home_location:
+            base += 0.3
+
+        return self.clamp01(base)
 
     def sell_utility(self) -> float:
-        food_amount = self.farmer.inventory.get("food", 0)
-        return self.clamp01(
-            food_amount / self.farmer.survival_buffer
-        )
+        surplus_ratio = self.food_surplus_ratio()
+        if surplus_ratio <= 0:
+            return 0.0
 
-    def travel_utility(self) -> float:
-        market_pos = self.farmer.model.city_network.points_of_interest.get("market")
-        produce_needed = self.produce_utility()
-        sell_needed = self.sell_utility()
+        market = self.farmer.model.city_network.points_of_interest["market"]
+        base = surplus_ratio
 
-        if sell_needed > 0.5 and self.farmer.pos != market_pos:
-            return 0.7
-        if produce_needed > 0.5 and self.farmer.pos != self.farmer.home_location:
-            return 0.6
-        return 0.1
+        if self.farmer.pos == market:
+            base *= 0.2
+
+        return self.clamp01(base)
 
     @staticmethod
     def idle_utility() -> float:
@@ -35,7 +49,6 @@ class FarmerUtility:
         utilities = {
             "produce": self.produce_utility(),
             "sell": self.sell_utility(),
-            "travel": self.travel_utility(),
-            "idle": self.idle_utility()
+            "idle": self.idle_utility(),
         }
         return max(utilities, key=utilities.get)

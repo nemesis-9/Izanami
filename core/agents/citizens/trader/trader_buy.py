@@ -24,7 +24,7 @@ class TraderBuy:
             return False
 
         for resource in resources_available:
-            base_price = self.trader.model.economy.base_prices.get(resource)
+            base_price = self.trader.model.economy.base_prices.get(resource, 0)
             current_price = self.trader.model.economy.calculate_price(resource)
 
             buying_price = round(base_price * self.trader.buying_aggression, 3)

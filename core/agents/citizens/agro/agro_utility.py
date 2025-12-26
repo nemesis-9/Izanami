@@ -7,37 +7,43 @@ class AgroUtility:
         return max(0.0, min(1.0, x))
 
     def inventory_ratio(self) -> float:
-        max_inv = max(1.0, self.agro.max_inventory)
-        current_inv = sum(self.agro.inventory.values())
-        return self.clamp01(current_inv / max_inv)
+        max_inv = max(1, self.agro.max_inventory)
+        current = sum(self.agro.inventory.values())
+        return self.clamp01(current / max_inv)
+
+    def food_surplus_ratio(self) -> float:
+        food = self.agro.inventory.get("food", 0)
+        surplus = max(0, food - self.agro.personal_minimum)
+        return self.clamp01(
+            surplus / max(1, self.agro.selling_margin)
+        )
 
     def produce_utility(self) -> float:
-        if not self.agro.has_farm_plot or self.inventory_ratio() >= 1.0:
+        if not self.agro.has_farm_plot:
             return 0.0
 
-        return self.clamp01((1.0 - self.inventory_ratio()) * 0.8 + 0.1)
+        inv_pressure = self.inventory_ratio()
+        base = (1.0 - inv_pressure)
+
+        if self.agro.is_emergency:
+            base *= 0.6
+
+        return self.clamp01(base * 0.9 + 0.1)
 
     def sell_utility(self) -> float:
-        food_amount = self.agro.inventory.get("food", 0)
-        if food_amount <= self.agro.personal_minimum and not self.agro.is_emergency:
+        if self.agro.inventory.get("food", 0) <= self.agro.personal_minimum:
             return 0.0
 
-        surplus = max(0, food_amount - self.agro.personal_minimum)
-        surplus_ratio = surplus / max(1, self.agro.selling_margin)
-        emergency_boost = 0.5 if self.agro.is_emergency else 0.0
+        surplus_drive = self.food_surplus_ratio()
 
-        return self.clamp01(surplus_ratio + emergency_boost)
+        emergency_boost = 0.6 if self.agro.is_emergency else 0.0
 
-    def travel_utility(self) -> float:
-        market_pos = self.agro.model.city_network.points_of_interest.get("market")
-        produce_needed = self.produce_utility()
-        sell_needed = self.sell_utility()
+        market = self.agro.model.city_network.points_of_interest["market"]
+        market_penalty = 0.3 if self.agro.pos == market else 0.0
 
-        if sell_needed > 0.7 and self.agro.pos != market_pos:
-            return 0.8
-        if produce_needed > 0.6 and self.agro.pos != self.agro.home_location:
-            return 0.7
-        return 0.1
+        return self.clamp01(
+            surplus_drive + emergency_boost - market_penalty
+        )
 
     @staticmethod
     def idle_utility() -> float:
@@ -47,7 +53,6 @@ class AgroUtility:
         utilities = {
             "produce": self.produce_utility(),
             "sell": self.sell_utility(),
-            "travel": self.travel_utility(),
             "idle": self.idle_utility(),
         }
         return max(utilities, key=utilities.get)

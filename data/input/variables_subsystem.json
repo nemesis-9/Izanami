@@ -1,90 +1,90 @@
 {
   "economy":
   {
-    "wealth": 500,
-    "wealth_margin": 0.1,
+    "wealth": 20000,
+    "wealth_margin": 0.15,
     "base_prices":
     {
-      "food": 2.0,
-      "iron": 4.0,
-      "copper": 5.0,
-      "gold": 10.0
+      "food": 3.5,
+      "iron": 5.0,
+      "copper": 6.0,
+      "gold": 25.0
     },
 
     "price_elasticities": {
-      "food": 0.1,
-      "iron": 0.2,
-      "copper": 0.3,
-      "gold": 0.5
+      "food": 0.05,
+      "iron": 0.12,
+      "copper": 0.18,
+      "gold": 0.45
     },
 
     "minimum_threshold": {
-      "food": 0.5,
-      "iron": 0.2,
-      "copper": 0.2,
-      "gold": 0.1
+      "food": 1.0,
+      "iron": 1.0,
+      "copper": 1.0,
+      "gold": 5.0
     },
 
     "maximum_threshold": {
-      "food": 6.0,
-      "iron": 12.0,
-      "copper": 15.0,
-      "gold": 100.0
+      "food": 15.0,
+      "iron": 25.0,
+      "copper": 30.0,
+      "gold": 200.0
     },
 
     "target_supply": {
-      "food": 1000,
-      "iron": 1000,
-      "copper": 1500,
-      "gold": 3000
-    },
-
-    "resource_pools": {
-      "food": 500,
-      "iron": 100,
-      "copper": 150,
+      "food": 1500,
+      "iron": 500,
+      "copper": 500,
       "gold": 100
     },
 
+    "resource_pools": {
+      "food": 800,
+      "iron": 200,
+      "copper": 200,
+      "gold": 50
+    },
+
     "price_pools": {
-      "food": 2.2,
-      "iron": 4.1,
-      "copper": 5.7,
-      "gold": 13.0
+      "food": 3.5,
+      "iron": 5.0,
+      "copper": 6.0,
+      "gold": 25.0
     }
   },
 
   "governance":
   {
     "initial_budget": 5000,
-    "treasury_min": 1000,
+    "treasury_min": 2000,
     "treasury_max": 50000,
 
-    "tax_rate": 0.03,
-    "tax_min_rate": 0.01,
-    "tax_max_rate": 0.15,
-    "tax_adj_rate": 0.01,
-    "tax_threshold": 5.0,
+    "tax_rate": 0.015,
+    "tax_min_rate": 0.005,
+    "tax_max_rate": 0.08,
+    "tax_adj_rate": 0.005,
+    "tax_threshold": 10.0,
 
     "aid_fund":
     {
-      "food": 100
+      "food": 200
     },
     "aid_amount":
     {
-      "food": 20
+      "food": 15
     },
     "aid_max_per_agent": {
-      "food": 5
+      "food": 4
     },
     "aid_price_margin":
     {
-      "food": 0.5
+      "food": 0.3
     },
     "aid_threshold":
     {
-      "wealth": 45,
-      "food": 10
+      "wealth": 60,
+      "food": 8
     }
   }
 }

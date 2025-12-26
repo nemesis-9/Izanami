@@ -27,7 +27,7 @@ class Crafter(BaseAgent):
         self.selling_logic = CrafterSell(self)
         self.travel_logic = CrafterTravel(self)
         self.crafting_logic = CrafterCraft(self)
-        self.utility = CrafterUtility(self)
+        self.utility_logic = CrafterUtility(self)
 
         self.max_inventory = initial_crafter_config.get("max_inventory", 0)
         self.buying_power = initial_crafter_config.get("buying_power", {})
@@ -66,28 +66,18 @@ class Crafter(BaseAgent):
             return
 
         self.update_agent_config()
-
-        self.action = self.utility.decide_action()
+        self.action = self.utility_logic.decide_action()
 
         market = self.model.city_network.points_of_interest["market"]
         city_center = self.model.city_network.points_of_interest["city_center"]
-
-        if self.action == "sell":
-            self.destination = city_center
-        elif self.action == "buy":
-            self.destination = market
-        elif self.action == "craft":
-            self.destination = self.home_location
-        else:
-            self.destination = None
 
         is_moving = self.travel_logic.move()
         if is_moving:
             return
 
-        if self.action == 'buy' and self.pos == market:
+        if self.action == "buy" and self.pos == market:
             self.buy_materials()
-        elif self.action == 'sell' and self.pos == city_center:
+        elif self.action == "sell" and self.pos == city_center:
             self.sell_goods()
-        elif self.action == 'craft' and self.pos == self.home_location:
+        elif self.action == "craft" and self.pos == self.home_location:
             self.craft()

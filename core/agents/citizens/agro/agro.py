@@ -57,7 +57,6 @@ class Agro(BaseAgent):
     def sell_goods(self):
         selling_resources = self.selling_logic.sell_goods()
         if selling_resources:
-            print(f"Agro [{self.unique_id}] selling foods: {selling_resources}")
             self.trade.sell_goods(selling_resources)
 
     def apply_spoilage(self):
@@ -74,7 +73,8 @@ class Agro(BaseAgent):
 
     def step(self):
         super().step()
-        if not self.alive: return
+        if not self.alive:
+            return
 
         self.update_agent_config()
         self.emergency()
@@ -83,21 +83,11 @@ class Agro(BaseAgent):
         self.action = self.utility_logic.decide_action()
         market = self.model.city_network.points_of_interest["market"]
 
-        if self.action == "travel":
-            if self.utility_logic.sell_utility() > self.utility_logic.produce_utility():
-                self.destination = market
-            else:
-                self.destination = self.home_location
-            self.move()
+        is_moving = self.travel_logic.move()
+        if is_moving:
+            return
 
-        elif self.action == "produce":
-            if self.pos == self.home_location:
-                self.produce()
-            else:
-                self.move()
-
-        elif self.action == "sell":
-            if self.pos == market:
-                self.sell_goods()
-            else:
-                self.move()
+        if self.action == "produce" and self.pos == self.home_location:
+            self.produce()
+        elif self.action == "sell" and self.pos == market:
+            self.sell_goods()

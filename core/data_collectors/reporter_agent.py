@@ -8,8 +8,8 @@ reporter_agent = {
     "Wealth": lambda a: round(a.wealth, 2),
     "HealthPoints": lambda a: a.hp,
 
-    "Mode": lambda a: getattr(a, 'mode', 'N/A'),
-    "PersonalFoodSupply": lambda a: getattr(a, 'personal_food_supply', 0),
+    "Action": lambda a: getattr(a, 'action', 'N/A'),
+    "Foods": lambda a: round(a.inventory.get("food", 0), 3),
 
     "Inventory_ItemCount": lambda a: len(getattr(a, 'inventory', {})),
     "Inventory_TotalVolume": lambda a: sum(

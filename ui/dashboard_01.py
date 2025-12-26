@@ -45,24 +45,17 @@ def load_data():
 try:
     agent_data, model_data = load_data()
 
-    st.title('Izanami - ABM Model Dashboard 01')
-    st.markdown("A real-time visualization of agent states and city-level metrics across simulation steps.")
-
-    max_steps = int(model_data['Step'].max())
-    selected_step = st.slider('Select a step', min_value=1, max_value=max_steps, value=1)
-
-    current_agents = agent_data[agent_data['Step'] == selected_step].copy()
-
-    city_rows = model_data[model_data['Step'] == selected_step].reset_index(drop=True)
-    if city_rows.empty:
-        st.warning(f"Step {selected_step} has no data.")
-        st.stop()
-    current_city = city_rows.iloc[0]
-
     left_col, right_col = st.columns([4, 1])
 
     with left_col:
-        st.subheader(f"Agent Status - Step {selected_step}")
+        st.title('Izanami - ABM Model Dashboard 01')
+        st.markdown("A real-time visualization of agent states and city-level metrics across simulation steps.")
+
+        max_steps = int(model_data['Step'].max())
+        selected_step = st.slider('Select a step', min_value=1, max_value=max_steps, value=1)
+
+        current_agents = agent_data[agent_data['Step'] == selected_step].copy()
+        st.subheader(f"Agent Population Status")
 
         cols_per_row = 4
         for i in range(0, len(current_agents), cols_per_row):
@@ -83,40 +76,61 @@ try:
                             <div class="card-detail"><b>Type:</b> {agent['AgentType']}</div>
                             <div class="card-detail"><b>Health:</b> {agent['HealthPoints']:.1f}</div>
                             <div class="card-detail"><b>Wealth:</b> ${agent['Wealth']:.2f}</div>
-                            <div class="card-detail"><b>Food:</b> {agent['PersonalFoodSupply']}</div>
+                            <div class="card-detail"><b>Foods:</b> {agent['Foods']}</div>
                             <div class="card-detail"><b>Loc:</b> {agent['AgentLocation']}</div>
+                            <div class="card-detail"><b>Action:</b> {agent['Action']}</div>
                         </div>
                     """, unsafe_allow_html=True)
 
     with right_col:
-        st.subheader("City Overview")
-        st.info(f"**Season:** {current_city['CurrentSeason'].capitalize()}")
+        city_rows = model_data[model_data['Step'] == selected_step].reset_index(drop=True)
+        if not city_rows.empty:
+            current_city = city_rows.iloc[0]
 
-        st.write("**Demographics**")
-        st.metric("Total Agents", int(current_city['TotalAgents']))
-        st.caption(f"Agro: {current_city['Count_Agro']} | Farmer: {current_city['Count_Farmer']}")
-        st.caption(f"Crafter: {current_city['Count_Crafter']} | Trader: {current_city['Count_Trader']}")
+            st.subheader("City Overview")
 
-        st.divider()
+            st.info(f"**Season:** {current_city['CurrentSeason'].capitalize()}")
 
-        st.write("**Resource Pools**")
-        res_cols = st.columns(2)
-        res_cols[0].metric("Food", f"{current_city['FoodPool']:.0f}")
-        res_cols[1].metric("Gold", f"{current_city['GoldPool']:.0f}")
-        res_cols[0].metric("Iron", f"{current_city['IronPool']:.0f}")
-        res_cols[1].metric("Copper", f"{current_city['CopperPool']:.0f}")
+            st.write("**Demographics**")
 
-        st.divider()
+            st.metric("Total Agents", int(current_city['TotalAgents']))
+            st.caption(f"Agro: {current_city['Count_Agro']} | Farmer: {current_city['Count_Farmer']}")
+            st.caption(f"Crafter: {current_city['Count_Crafter']} | Trader: {current_city['Count_Trader']}")
 
-        st.write("**Market Prices**")
-        st.metric("Food Price", f"${current_city['FoodPrice']:.2f}")
-        st.metric("Iron Price", f"${current_city['IronPrice']:.2f}")
+            st.divider()
 
-        st.divider()
+            st.write("**Resource Pools**")
+            res_cols = st.columns(2)
 
-        st.write("**Economy**")
-        st.metric("Treasury", f"${current_city['Treasury']:.2f}")
-        st.metric("Tax Rate", f"{current_city['TaxRate'] * 100:.1f}%")
+            res_cols[0].metric("Food", f"{current_city['FoodPool']:.0f}")
+            res_cols[1].metric("Gold", f"{current_city['GoldPool']:.0f}")
+            res_cols[0].metric("Iron", f"{current_city['IronPool']:.0f}")
+            res_cols[1].metric("Copper", f"{current_city['CopperPool']:.0f}")
+
+            st.divider()
+
+            st.write("**Market Prices**")
+
+            price_cols = st.columns(2)
+            price_cols[0].metric("Food Price", f"${current_city['FoodPrice']:.0f}")
+            price_cols[1].metric("Iron Price", f"${current_city['IronPrice']:.0f}")
+            price_cols[0].metric("Copper Price", f"${current_city['CopperPrice']:.0f}")
+            price_cols[1].metric("Gold Price", f"${current_city['GoldPrice']:.0f}")
+
+            st.divider()
+
+            st.write("**Economy & Governance**")
+
+            st.metric("Total Wealth", f"${current_city['TotalWealth']:.2f}")
+            st.metric("Treasury", f"${current_city['Treasury']:.2f}")
+
+            tax_col, aid_col = st.columns(2)
+            tax_col.metric("Tax Rate", f"{current_city['TaxRate'] * 100:.1f}%")
+            aid_col.metric("Aid (Food)", f"{current_city['AidFund_Food']:.0f}")
+
+            st.caption(f"Total Tax: ${current_city['TotalTaxCollected']:.2f}")
+        else:
+            st.warning("No data for this step.")
 
 except Exception as e:
     st.error(f"Error loading data: {e}")

@@ -3,70 +3,58 @@ class CrafterUtility:
         self.crafter = crafter
 
     @staticmethod
-    def clamp01(x: float) -> float:
+    def clamp01(x):
         return max(0.0, min(1.0, x))
 
-    def inventory_ratio(self) -> float:
-        max_inv = max(1, self.crafter.max_inventory)
+    def inventory_ratio(self):
         return self.clamp01(
-            sum(self.crafter.inventory.values()) / max_inv
+            sum(self.crafter.inventory.values()) / max(1, self.crafter.max_inventory)
         )
 
-    def wealth_ratio(self) -> float:
-        margin = max(1, self.crafter.wealth_margin)
+    def wealth_ratio(self):
         return self.clamp01(
-            self.crafter.wealth / margin
+            self.crafter.wealth / max(1, self.crafter.wealth_margin)
         )
 
-    def high_inventory_pressure(self) -> float:
-        return self.clamp01(
-            self.clamp01(
-                self.inventory_ratio() / max(0.01, self.crafter.inventory_margin)
-            )
-        )
+    def inventory_margin_ratio(self):
+        return self.clamp01(self.crafter.inventory_margin)
 
-    def craft_utility(self) -> float:
-        if not self.crafter.crafting_logic.can_craft_anything():
+    def inventory_pressure(self):
+        margin = self.inventory_margin_ratio()
+        excess = self.inventory_ratio() - margin
+        return self.clamp01(excess / max(0.01, 1.0 - margin))
+
+    def craft_utility(self):
+        if (
+                not self.crafter.crafting_logic.can_craft_anything()
+                or sum(self.crafter.inventory.values()) >= self.crafter.max_inventory
+        ):
             return 0.0
 
-        return (
-            (1.0 - self.inventory_ratio())
-            * (0.5 + 0.5 * self.wealth_ratio())
-        )
+        return (1.0 - self.inventory_ratio()) * (0.4 + 0.6 * self.wealth_ratio())
 
-    def sell_utility(self) -> float:
-        if not self.crafter.selling_logic.need_to_sell():
+    def sell_utility(self):
+        if (
+                not self.crafter.selling_logic.need_to_sell()
+                or self.inventory_pressure() <= 0
+        ):
             return 0.0
+        return self.inventory_pressure()
 
-        return (
-            self.high_inventory_pressure()
-            * (1.0 - self.wealth_ratio())
-        )
-
-    def buy_utility(self) -> float:
-        if self.crafter.wealth <= 0:
+    def buy_utility(self):
+        if not self.crafter.buying_logic.need_to_buy():
             return 0.0
-
-        return (
-            self.wealth_ratio()
-            * (1.0 - self.inventory_ratio())
-        )
-
-    def travel_utility(self) -> float:
-        poi = self.crafter.model.city_network.points_of_interest.values()
-        return 0.3 if self.crafter.pos not in poi else 0.0
+        return (1.0 - self.inventory_ratio()) * self.wealth_ratio()
 
     @staticmethod
     def idle_utility() -> float:
         return 0.05
 
-    def decide_action(self) -> str:
+    def decide_action(self):
         utilities = {
             "craft": self.craft_utility(),
             "sell": self.sell_utility(),
             "buy": self.buy_utility(),
-            "travel": self.travel_utility(),
             "idle": self.idle_utility(),
         }
-
         return max(utilities, key=utilities.get)

@@ -18,7 +18,7 @@ class AgentConsumeLogic:
             actual_cost = food_gained * current_price
             self.agent.wealth -= actual_cost
             self.agent.model.economy.wealth += actual_cost
-            self.agent.inventory["food"] += self.agent.inventory.get("food", 0) + food_gained
+            self.agent.inventory["food"] = self.agent.inventory.get("food", 0) + food_gained
             return True
 
         return False
