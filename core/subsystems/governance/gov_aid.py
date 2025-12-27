@@ -4,7 +4,7 @@ class GovAid:
 
     def fund_aid(self):
         for resource, amount in self.gov.aid_amount.items():
-            current_price = self.gov.model.economy.calculate_price(resource)
+            current_price = self.gov.model.economy.current_price(resource)
             aid_price = round(current_price * self.gov.aid_price_margin.get(resource, 1.0), 3)
 
             received_amount = self.gov.model.economy.request_resource(resource, amount)

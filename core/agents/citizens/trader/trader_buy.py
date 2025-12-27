@@ -25,7 +25,7 @@ class TraderBuy:
 
         for resource in resources_available:
             base_price = self.trader.model.economy.base_prices.get(resource, 0)
-            current_price = self.trader.model.economy.calculate_price(resource)
+            current_price = self.trader.model.economy.current_price(resource)
 
             buying_price = round(base_price * self.trader.buying_aggression, 3)
             if current_price <= buying_price:
@@ -56,7 +56,7 @@ class TraderBuy:
             if resource not in allowed_goods:
                 continue
 
-            current_price = self.trader.model.economy.calculate_price(resource)
+            current_price = self.trader.model.economy.current_price(resource)
             buy_candidates.append((resource, current_price))
 
         buy_candidates.sort(key=lambda x: x[1])

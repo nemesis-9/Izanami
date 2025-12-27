@@ -1,12 +1,12 @@
 reporter_model = {
     "Step": lambda m: m.steps,
     "CurrentSeason": lambda m: m.current_season,
-    "TotalAgents": lambda m: len(m.agents),
+    "TotalAgents": lambda m: len([a for a in m.agents if a.alive]),
 
-    "Count_Agro": lambda m: len([a for a in m.agents if a.agent_type == 'agro']),
-    "Count_Crafter": lambda m: len([a for a in m.agents if a.agent_type == 'crafter']),
-    "Count_Farmer": lambda m: len([a for a in m.agents if a.agent_type == 'farmer']),
-    "Count_Trader": lambda m: len([a for a in m.agents if a.agent_type == 'trader']),
+    "Count_Agro": lambda m: len([a for a in m.agents if a.agent_type == 'agro' and a.alive]),
+    "Count_Crafter": lambda m: len([a for a in m.agents if a.agent_type == 'crafter' and a.alive]),
+    "Count_Farmer": lambda m: len([a for a in m.agents if a.agent_type == 'farmer' and a.alive]),
+    "Count_Trader": lambda m: len([a for a in m.agents if a.agent_type == 'trader' and a.alive]),
 
     "TotalWealth": lambda m: round(sum(a.wealth for a in m.agents), 2),
     "EconomyWealth": lambda m: round(m.economy.wealth, 2),
@@ -16,10 +16,10 @@ reporter_model = {
     "CopperPool": lambda m: m.economy.resource_pools.get("copper", 0),
     "GoldPool": lambda m: m.economy.resource_pools.get("gold", 0),
 
-    "FoodPrice": lambda m: round(m.economy.calculate_price("food"), 2),
-    "IronPrice": lambda m: round(m.economy.calculate_price("iron"), 2),
-    "CopperPrice": lambda m: round(m.economy.calculate_price("copper"), 2),
-    "GoldPrice": lambda m: round(m.economy.calculate_price("gold"), 2),
+    "FoodPrice": lambda m: round(m.economy.current_price("food"), 2),
+    "IronPrice": lambda m: round(m.economy.current_price("iron"), 2),
+    "CopperPrice": lambda m: round(m.economy.current_price("copper"), 2),
+    "GoldPrice": lambda m: round(m.economy.current_price("gold"), 2),
 
     "Treasury": lambda m: round(m.governance.treasury, 2),
     "TotalTaxCollected": lambda m: round(m.governance.total_tax_collected, 2),

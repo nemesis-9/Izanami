@@ -38,7 +38,7 @@ class CrafterSell:
 
         sell_candidates = []
         for resource in selling_resources:
-            current_price = self.crafter.model.economy.calculate_price(resource)
+            current_price = self.crafter.model.economy.current_price(resource)
             sell_candidates.append((resource, current_price))
 
         sell_candidates.sort(key=lambda x: x[1], reverse=True)

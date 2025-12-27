@@ -1,7 +1,7 @@
 {
   "economy":
   {
-    "wealth": 20000,
+    "wealth": 5000,
     "wealth_margin": 0.15,
     "base_prices":
     {

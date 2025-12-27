@@ -42,9 +42,9 @@ class CrafterCraft:
 
             if max_crafts > 0:
                 profit = (
-                    self.crafter.model.economy.calculate_price(item) -
+                    self.crafter.model.economy.current_price(item) -
                     sum(
-                        q * self.crafter.model.economy.calculate_price(m)
+                        q * self.crafter.model.economy.current_price(m)
                         for m, q in mats.items()
                     )
                 )

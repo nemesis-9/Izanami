@@ -150,12 +150,12 @@ class CityModel(Model):
 
         self.governance.distribute_aid()
 
-        dead_agents = [a for a in self.agents if not a.alive]
-        for agent in dead_agents:
-            self.grid.remove_agent(agent)
-            self.agents.remove(agent)
+        # dead_agents = [a for a in self.agents if not a.alive]
+        # for agent in dead_agents:
+        #     self.grid.remove_agent(agent)
+        #     self.agents.remove(agent)
 
         self.datacollector.collect(self)
 
         # self.steps += 1
-        print(f"  City Step {self.steps}: Living Agents = {len(self.agents)}")
+        print(f"  City Step {self.steps}: Living Agents = {len([a for a in self.agents if a.alive])}")

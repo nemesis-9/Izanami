@@ -11,7 +11,7 @@ class AgroSell:
         if sellable_amount <= 0:
             return None
 
-        current_price = self.agro.model.economy.calculate_price(resource)
+        current_price = self.agro.model.economy.current_price(resource)
         base_price = self.agro.model.economy.base_prices.get('food', 0)
         price_threshold = base_price * self.agro.selling_power.get('food', 1)
 

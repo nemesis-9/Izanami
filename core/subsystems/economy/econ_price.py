@@ -36,9 +36,3 @@ class EconomyPrice:
         final_price = min(maximum_threshold, temp_final_price)
 
         return final_price
-
-    # @staticmethod
-    # def new_price_formula(base_price, resource_pool, price_elasticity):
-    #     # simple inverse relationship formula
-    #     new_price = round(base_price - (resource_pool * price_elasticity), 3)
-    #     return new_price

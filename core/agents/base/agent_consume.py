@@ -6,7 +6,7 @@ class AgentConsumeLogic:
         replenishment = self.agent.replenishment_buffer
         total_to_request = food_needed + replenishment
 
-        current_price = self.agent.model.economy.calculate_price("food")
+        current_price = self.agent.model.economy.current_price("food")
 
         if self.agent.wealth < (food_needed * current_price):
             return False

@@ -36,6 +36,9 @@ class Economy:
         actual_gained = self.remove_logic.request_resource(resource_name, amount)
         return actual_gained
 
+    def current_price(self, resource):
+        return self.price_pools.get(resource, 0)
+
     def step(self):
         for resource in self.resource_pools.keys():
             self.calculate_price(resource)

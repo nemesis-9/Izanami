@@ -41,18 +41,15 @@ class BaseAgent(Agent):
         return self.travel_logic.pathfinding_move(current_pos, destination_pos)
 
     def step(self):
-        self.update_agent_config()
-
         if self.hp_logic.death_check():
             return
 
+        self.update_agent_config()
         self.age += 1
-
         self.consume_logic.consume()
+
         if self.hp_logic.death_check():
             return
 
         if hasattr(self, 'destination') and self.destination:
             self.travel_logic.pathfinding_move(self.location, self.destination)
-
-        self.hp_logic.death_check()

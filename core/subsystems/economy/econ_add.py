@@ -10,7 +10,7 @@ class EconomyAdd:
         if amount <= 0:
             return 0
 
-        current_price = self.econ.price_logic.calculate_price(resource_name)
+        current_price = self.econ.current_price(resource_name)
         total_cost = current_price * amount
         affordable_cost = self.affordance()
 

@@ -25,7 +25,7 @@ class TraderSell:
 
         for resource in resource_available:
             base_price = self.trader.model.economy.base_prices[resource]
-            current_price = self.trader.model.economy.calculate_price(resource)
+            current_price = self.trader.model.economy.current_price(resource)
             selling_price = round(base_price * self.trader.selling_aggression, 3)
             if current_price >= selling_price:
                 selling_resources.append(resource)
@@ -55,7 +55,7 @@ class TraderSell:
             if resource not in allowed_goods:
                 continue
 
-            current_price = self.trader.model.economy.calculate_price(resource)
+            current_price = self.trader.model.economy.current_price(resource)
             sell_candidates.append((resource, current_price))
 
         sell_candidates.sort(key=lambda x: x[1], reverse=True)
