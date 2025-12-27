@@ -150,10 +150,17 @@ class CityModel(Model):
 
         self.governance.distribute_aid()
 
-        # dead_agents = [a for a in self.agents if not a.alive]
-        # for agent in dead_agents:
-        #     self.grid.remove_agent(agent)
-        #     self.agents.remove(agent)
+        dead_and_not_memorialized = []
+        for agent in list(self.agents):  # Use list() to avoid mutation errors during iteration
+            if not agent.alive:
+                if agent.memorial:
+                    self.grid.remove_agent(agent)
+                    self.agents.remove(agent)
+                else:
+                    dead_and_not_memorialized.append(agent)
+
+        if dead_and_not_memorialized:
+            self.governance.do_memorial(dead_and_not_memorialized)
 
         self.datacollector.collect(self)
 

@@ -15,5 +15,7 @@ reporter_agent = {
     "Inventory_TotalVolume": lambda a: sum(
         v for v in getattr(a, 'inventory', {}).values()
         if isinstance(v, (int, float))
-    )
+    ),
+
+    "Inventory": lambda a: getattr(a, 'inventory', {}),
 }

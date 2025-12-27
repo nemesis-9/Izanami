@@ -3,12 +3,11 @@ import shutil
 import pandas as pd
 
 from core.models.world import WorldModel
-from core.models.city import CityModel
 
 from core.data_collectors.reporter_agent import reporter_agent
 from core.data_collectors.reporter_model import reporter_model
 
-CURRENT_PHASE = 7
+CURRENT_PHASE = 8
 
 if __name__ == '__main__':
     print("--- Starting City Simulation Test ---")
@@ -66,11 +65,16 @@ if __name__ == '__main__':
                 records.append(row)
         agent_data = pd.DataFrame.from_records(records)
 
-    model_filename = os.path.join(output_dir, "model_data_test.csv")
-    agent_filename = os.path.join(output_dir, "agent_data_test.csv")
+    memorial_entries = city_instance.governance.memorial_log
+    memorial_df = pd.DataFrame(memorial_entries)
+
+    model_filename = os.path.join(output_dir, "model_data.csv")
+    agent_filename = os.path.join(output_dir, "agent_data.csv")
+    memorial_filename = os.path.join(output_dir, "memorial_log.csv")
 
     model_data.to_csv(model_filename)
     agent_data.to_csv(agent_filename)
+    memorial_df.to_csv(memorial_filename, index=False)
 
     print(f"Model data saved to: {model_filename}")
     print(f"Agent data saved to: {agent_filename}")

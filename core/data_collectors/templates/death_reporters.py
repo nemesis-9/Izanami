@@ -1,4 +1,5 @@
 memorial_template = {
+    "Step": lambda a: a.model.steps,
     "AgentID": lambda a: a.unique_id,
     "AgentType": lambda a: getattr(a, 'agent_type', 'Unknown'),
     "DyingAge": lambda a: a.age,
@@ -13,5 +14,7 @@ memorial_template = {
     "DyingInv_TotalVolume": lambda a: sum(
         v for v in getattr(a, 'inventory', {}).values()
         if isinstance(v, (int, float))
-    )
+    ),
+
+    "Dying_Inventory": lambda a: getattr(a, 'inventory', {}),
 }

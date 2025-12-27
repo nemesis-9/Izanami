@@ -12,6 +12,7 @@ class BaseAgent(Agent):
         self.wealth = wealth
         self.agent_type = agent_type
         self.alive = True
+        self.memorial = False
 
         self.location = None
         self.path = None

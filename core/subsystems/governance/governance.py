@@ -1,5 +1,8 @@
 from core.subsystems.governance.gov_aid import GovAid
 from core.subsystems.governance.gov_tax import GovTax
+from core.subsystems.governance.gov_memorial import GovMemorial
+
+from core.data_collectors.templates.death_reporters import memorial_template
 
 
 class Governance:
@@ -8,9 +11,14 @@ class Governance:
 
         self.total_tax_collected = 0
         self.total_public_spending = 0
+        self.inventory = {}
 
         self.aid_logic = GovAid(self)
         self.tax_logic = GovTax(self)
+        self.memorial_logic = GovMemorial(self)
+
+        self.memorial_template = memorial_template
+        self.memorial_log = []
 
         self.treasury = governance_variables.get('initial_budget', 0)
         self.treasury_min = governance_variables.get('treasury_min', 0)
@@ -37,3 +45,6 @@ class Governance:
 
     def distribute_aid(self):
         self.aid_logic.distribute_aid()
+
+    def do_memorial(self, agents):
+        self.memorial_logic.memorial(agents)
