@@ -1,30 +1,37 @@
+from collections import Counter
+
+
+def get_agent_counts(model):
+    counts = Counter(a.agent_type for a in model.agents if a.alive)
+    return str(dict(counts))
+
+
 reporter_model = {
     "Step": lambda m: m.steps,
     "CurrentSeason": lambda m: m.current_season,
-    "TotalAgents": lambda m: len([a for a in m.agent_tab if a.alive]),
 
-    "Count_Agro": lambda m: len([a for a in m.agent_tab if a.agent_type == 'agro' and a.alive]),
-    "Count_Crafter": lambda m: len([a for a in m.agent_tab if a.agent_type == 'crafter' and a.alive]),
-    "Count_Farmer": lambda m: len([a for a in m.agent_tab if a.agent_type == 'farmer' and a.alive]),
-    "Count_Trader": lambda m: len([a for a in m.agent_tab if a.agent_type == 'trader' and a.alive]),
+    # Agent
+    "TotalAgents": lambda m: len([a for a in m.agents if a.alive]),
+    "LivingAgents": lambda m: get_agent_counts(m),
 
-    "TotalWealth": lambda m: round(sum(a.wealth for a in m.agent_tab), 2),
+    "TotalAgentWealth": lambda m: round(sum(a.wealth for a in m.agents), 2),
+
+    # Economy
     "EconomyWealth": lambda m: round(m.economy.wealth, 2),
 
-    "FoodPool": lambda m: m.economy.resource_pools.get("food", 0),
-    "IronPool": lambda m: m.economy.resource_pools.get("iron", 0),
-    "CopperPool": lambda m: m.economy.resource_pools.get("copper", 0),
-    "GoldPool": lambda m: m.economy.resource_pools.get("gold", 0),
+    "ResourcePool": lambda m: str(getattr(m.economy, 'resource_pools', {})),
+    "PricePool": lambda m: str(getattr(m.economy, 'price_pools', {})),
 
-    "FoodPrice": lambda m: round(m.economy.current_price("food"), 2),
-    "IronPrice": lambda m: round(m.economy.current_price("iron"), 2),
-    "CopperPrice": lambda m: round(m.economy.current_price("copper"), 2),
-    "GoldPrice": lambda m: round(m.economy.current_price("gold"), 2),
+    "BasePrices": lambda m: str(getattr(m.economy, 'base_prices', {})),
+    "TargetSupply": lambda m: str(getattr(m.economy, 'target_supply', {})),
 
-    "Treasury": lambda m: round(m.governance.treasury, 2),
+    # Government
     "TotalTaxCollected": lambda m: round(m.governance.total_tax_collected, 2),
     "TotalPublicSpending": lambda m: round(m.governance.total_public_spending, 2),
+    "GovInventory": lambda m: str(getattr(m.governance, 'inventory', {})),
+
+    "Treasury": lambda m: round(m.governance.treasury, 2),
     "TaxRate": lambda m: round(m.governance.tax_rate, 4),
 
-    "AidFund_Food": lambda m: m.governance.aid_fund.get("food", 0),
+    "AidFund": lambda m: str(getattr(m.governance, "aid_fund", {})),
 }

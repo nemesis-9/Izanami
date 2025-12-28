@@ -12,7 +12,7 @@ def generate_agent_cards(death_records):
 
 def memorial_tab(memorial_data):
 
-    header_cols = st.columns([4, 1.2])
+    header_cols = st.columns([9, 2])
 
     with header_cols[0]:
         st.markdown("""
@@ -32,13 +32,14 @@ def memorial_tab(memorial_data):
         """, unsafe_allow_html=True)
 
     with header_cols[1]:
-        spc = st.columns([2, 1, 2])
+        spc = st.columns(3)
         with spc[1]:
             st.metric("Step", st.session_state.step)
 
-    left_col, right_col = st.columns([4, 1.2])
+    left_col, right_col = st.columns([9, 2])
 
     with left_col:
+        st.divider()
 
         available_types = sorted(memorial_data['AgentType'].unique().tolist())
         selected_types = st.multiselect(

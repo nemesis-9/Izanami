@@ -34,6 +34,7 @@ def agent_card(agent):
             <div>
                 <div class="agent-title">Agent {agent.get('AgentID', 'Unknown')}</div>
                 <span class="agent-badge">{agent.get('AgentType', 'Unknown')}</span>
+                <span class="stat-label">Cy. {agent.get('Age', 'Unknown')}</span>
             </div>
         </div>
         <div class="agent-stats">

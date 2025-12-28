@@ -7,7 +7,7 @@ class AgentHP:
         if self.agent.location:
             self.agent.model.grid.remove(self.agent)
 
-        self.agent.model.agent_tab.remove(self.agent)
+        self.agent.model.agents.remove(self.agent)
 
     def death_check(self):
         if not self.agent.alive:

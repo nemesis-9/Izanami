@@ -153,7 +153,7 @@ class CityModel(Model):
         dead_and_not_memorialized = []
         for agent in list(self.agents):  # Use list() to avoid mutation errors during iteration
             if not agent.alive:
-                if agent.memorial_tab:
+                if agent.memorial:
                     self.grid.remove_agent(agent)
                     self.agents.remove(agent)
                 else:

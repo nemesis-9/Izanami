@@ -17,5 +17,5 @@ reporter_agent = {
         if isinstance(v, (int, float))
     ),
 
-    "Inventory": lambda a: getattr(a, 'inventory', {}),
+    "Inventory": lambda a: str(getattr(a, 'inventory', {})),
 }

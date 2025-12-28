@@ -1,10 +1,11 @@
 import streamlit as st
+import ast
 
 from ui.components.agentCard import agent_card
 
 
 def agent_tab(agent_data, model_data):
-    header_cols = st.columns([4, 1.2])
+    header_cols = st.columns([9, 2])
 
     with header_cols[0]:
         st.markdown("""
@@ -24,15 +25,14 @@ def agent_tab(agent_data, model_data):
         """, unsafe_allow_html=True)
 
     with header_cols[1]:
-        spc = st.columns([2, 1, 2])
+        spc = st.columns(3)
         with spc[1]:
             st.metric("Step", st.session_state.step)
 
-    left_col, right_col = st.columns([4, 1.2])
+    left_col, right_col = st.columns([9, 2])
 
     with left_col:
-
-        st.subheader(f"Population Status")
+        st.divider()
 
         step_data = agent_data[agent_data['Step'] == st.session_state.step].copy()
         available_types = sorted(step_data['AgentType'].unique().tolist())
@@ -52,6 +52,8 @@ def agent_tab(agent_data, model_data):
         else:
             current_agents = step_data.iloc[0:0]
 
+        st.subheader(f"Population Status")
+
         cols_per_row = 5
         for i in range(0, len(current_agents), cols_per_row):
             row_agents = current_agents.iloc[i:i + cols_per_row]
@@ -62,33 +64,52 @@ def agent_tab(agent_data, model_data):
                     agent_card(agent)
 
     with right_col:
-        city_rows = model_data[model_data['Step'] == st.session_state.step].reset_index(drop=True)
+        spc = st.columns([1, 8, 1])
 
-        prev_step = st.session_state.step - 1
-        prev_city_rows = model_data[model_data['Step'] == prev_step].reset_index(drop=True)
+        with spc[1]:
+            city_rows = model_data[model_data['Step'] == st.session_state.step].reset_index(drop=True)
 
-        if not city_rows.empty:
-            current_city = city_rows.iloc[0]
+            prev_step = st.session_state.step - 1
+            prev_city_rows = model_data[model_data['Step'] == prev_step].reset_index(drop=True)
 
-            def get_delta(column_name):
-                if prev_city_rows.empty:
-                    return None
-                return int(current_city[column_name]) - int(prev_city_rows.iloc[0][column_name])
+            if not city_rows.empty:
+                current_city = city_rows.iloc[0]
 
-            st.subheader("Demographics")
+                def parse_counts(row):
+                    if 'LivingAgents' in row and isinstance(row['LivingAgents'], str):
+                        try:
+                            return ast.literal_eval(row['LivingAgents'])
+                        except:
+                            return {}
+                    return {}
 
-            st.metric("Total Agents", int(current_city['TotalAgents']), delta=get_delta('TotalAgents'))
+                current_counts = parse_counts(current_city)
+                prev_counts = parse_counts(prev_city_rows.iloc[0]) if not prev_city_rows.empty else {}
 
-            if selected_types:
-                agent_type_cols = st.columns(3)
+                def get_delta(column_name):
+                    if not prev_counts:
+                        return None
+                    curr_val = current_counts.get(agent_type.lower(), 0)
+                    prev_val = prev_counts.get(agent_type.lower(), 0)
+                    return int(curr_val - prev_val)
 
-                for i, agent_type in enumerate(selected_types):
-                    agent_type = agent_type.capitalize()
-                    column_key = f'Count_{agent_type}'
+                st.subheader("Demographic")
 
-                    with agent_type_cols[i % 3]:
-                        st.metric(
-                            label=agent_type,
-                            value=int(current_city.get(column_key, 0)),
-                            delta=get_delta(column_key)
-                        )
+                st.metric(
+                    "Total Agents",
+                    int(current_city['TotalAgents']),
+                    delta=int(current_city['TotalAgents'] - prev_city_rows.iloc[0]['TotalAgents']) if not prev_city_rows.empty else None
+                )
+
+                if selected_types:
+                    agent_type_cols = st.columns(3)
+
+                    for i, agent_type in enumerate(selected_types):
+                        type_key = agent_type.lower()
+
+                        with agent_type_cols[i % 3]:
+                            st.metric(
+                                label=agent_type.capitalize(),
+                                value=int(current_counts.get(type_key, 0)),
+                                delta=get_delta(type_key)
+                            )

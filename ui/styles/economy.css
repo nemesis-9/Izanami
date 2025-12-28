@@ -1,0 +1,22 @@
+div[data-testimonial="stTable"] table {
+    background-color: transparent !important;
+    color: #e5e7eb !important;
+}
+
+.eco-status-chip {
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 10px;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.status-critical {
+    background: rgba(239, 68, 68, 0.2);
+    color: #ef4444;
+}
+
+.status-stable {
+    background: rgba(16, 185, 129, 0.2);
+    color: #10b981;
+}

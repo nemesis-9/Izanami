@@ -7,7 +7,7 @@ from core.models.world import WorldModel
 from core.data_collectors.reporter_agent import reporter_agent
 from core.data_collectors.reporter_model import reporter_model
 
-CURRENT_PHASE = 8
+CURRENT_PHASE = 8.1
 
 if __name__ == '__main__':
     print("--- Starting City Simulation Test ---")

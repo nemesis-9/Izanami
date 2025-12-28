@@ -18,7 +18,7 @@ class GovAid:
     def distribute_aid(self):
         wealth_threshold = self.gov.aid_threshold.get('wealth', 0)
         agents_in_need = [
-            agent for agent in self.gov.model.agent_tab
+            agent for agent in self.gov.model.agents
             if agent.wealth <= wealth_threshold
         ]
 

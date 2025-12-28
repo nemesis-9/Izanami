@@ -5,7 +5,7 @@ class GovTax:
     def collect_taxes(self):
         tax_collected_in_step = 0
 
-        for agent in self.gov.model.agent_tab:
+        for agent in self.gov.model.agents:
             if agent.wealth > self.gov.tax_threshold:
                 taxable_wealth = agent.wealth - self.gov.tax_threshold
                 tax_amount = taxable_wealth * self.gov.tax_rate
