@@ -1,64 +1,66 @@
+import sys
 import pandas as pd
 import streamlit as st
+from pathlib import Path
 
-from tabs.sidebar import sidebar
-from tabs.overview import overview
-from tabs.agents import agents
+from ui.tabs.overview import overview_tab
+from ui.tabs.agents import agent_tab
+from ui.tabs.memorial import memorial_tab
+
+from ui.components.sidebar import sidebar
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+
+
+def local_css(file_name):
+    css_path = Path(__file__).parent / "styles" / file_name
+    with open(css_path, "r", encoding="utf-8") as f:
+        return f.read()
+
 
 st.set_page_config(layout="wide", page_title="Izanami Dashboard")
 
 st.markdown("""
-<style>
-    .agent-card {
-        border-radius: 10px;
-        padding: 15px;
-        margin-bottom: 10px;
-        height: 100%;
-    }
-    .alive-card {
-        border: 2px solid #28a745;
-        background-color: #f8fff9;
-    }
-    .dead-card {
-        border: 2px solid #dc3545;
-        background-color: #fff8f8;
-    }
-    .status-label {
-        font-weight: bold;
-        text-transform: uppercase;
-        font-size: 0.5rem;
-        padding: 2px 4px;
-        border-radius: 3px;
-        color: white;
-    }
-    .status-alive { background-color: #28a745; }
-    .status-dead { background-color: #dc3545; }
-    .card-title { font-weight: bold; font-size: 1.1rem; margin-bottom: 5px; }
-    .card-detail { font-size: 0.9rem; color: #555; }
-</style>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.1/flowbite.min.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.1/flowbite.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+    </style>
 """, unsafe_allow_html=True)
+
+st.markdown(
+    f"""<style>
+        {local_css("main.css")}
+        {local_css("agent_card.css")}
+    </style>""",
+    unsafe_allow_html=True
+)
 
 
 @st.cache_data
 def load_data():
-    agent_df = pd.read_csv('../data/output/phase7/agent_data_test.csv')
-    model_df = pd.read_csv('../data/output/phase7/model_data_test.csv')
-    return agent_df, model_df
+    agent_df = pd.read_csv('data/output/phase8/agent_data.csv')
+    model_df = pd.read_csv('data/output/phase8/model_data.csv')
+    memorial_df = pd.read_csv('data/output/phase8/memorial_log.csv')
+    return agent_df, model_df, memorial_df
 
 
 try:
-    agent_data, model_data = load_data()
+    agent_data, model_data, memorial_data = load_data()
 
     max_steps = int(model_data['Step'].max())
     with st.sidebar:
         sidebar(max_steps)
 
-    tabs = st.tabs(["Overview", "Economy", "Agents"])
+    tabs = st.tabs(["Overview", "Economy", "Agents", "Memorial"])
 
-    with tabs[0]:
-        overview(agent_data, model_data, st.session_state.step)
+    # with tabs[0]:
+    #     overview_tab(agent_data, model_data, st.session_state.step)
     with tabs[2]:
-        agents(agent_data, model_data)
+        agent_tab(agent_data, model_data)
+    with tabs[3]:
+        memorial_tab(memorial_data)
 
 
 except Exception as e:

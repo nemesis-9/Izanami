@@ -20,5 +20,5 @@ class GovMemorial:
             self.gov.inventory = update_inventory(self.gov.inventory, agent.inventory)
             agent.inventory = {}
 
-            agent.memorial = True
+            agent.memorial_tab = True
 

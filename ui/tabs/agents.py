@@ -1,23 +1,38 @@
 import streamlit as st
 
+from ui.components.agentCard import agent_card
 
-def agents(agent_data, model_data):
-    if 'step' not in st.session_state:
-        st.session_state.step = 1
 
-    title_col, state_col = st.columns([4, 1], vertical_alignment="center")
-    with title_col:
-        st.title('Izanami - Agent View')
-    with state_col:
-        semi_cols = st.columns(3, vertical_alignment="center")
-        with semi_cols[1]:
+def agent_tab(agent_data, model_data):
+    header_cols = st.columns([4, 1.2])
+
+    with header_cols[0]:
+        st.markdown("""
+        <div class="flex flex-col border-l-4 border-purple-600 pl-6 py-2">
+            <h1 class="text-6xl font-black text-white tracking-tighter flex items-center gap-4">
+                <span class="shining-title" style="font-size: 4rem; font-weight: 900; letter-spacing: -2px; font-style: italic;">
+                    IZANAMI
+                </span>
+                <span class="bg-purple-600 text-xs font-mono tracking-normal px-2 py-1 rounded italic text-purple-100">
+                    AGENTS
+                </span>
+            </h1>
+            <p class="text-purple-400/60 font-mono text-sm mt-1 uppercase tracking-widest">
+                Strategic Oversight & Biomass Recovery Logistics
+            </p>
+        </div>
+        """, unsafe_allow_html=True)
+
+    with header_cols[1]:
+        spc = st.columns([2, 1, 2])
+        with spc[1]:
             st.metric("Step", st.session_state.step)
 
-    left_col, right_col = st.columns([4, 1])
+    left_col, right_col = st.columns([4, 1.2])
 
     with left_col:
 
-        # st.subheader(f"Agent Population Status")
+        st.subheader(f"Population Status")
 
         step_data = agent_data[agent_data['Step'] == st.session_state.step].copy()
         available_types = sorted(step_data['AgentType'].unique().tolist())
@@ -25,14 +40,15 @@ def agents(agent_data, model_data):
         filter_cols = st.columns([0.1, 8, 1])
         with filter_cols[1]:
             selected_types = st.multiselect(
-                "",
+                "Agent Type",
                 options=available_types,
                 default=available_types,
-                format_func=lambda x: x.capitalize()
+                format_func=lambda x: x.capitalize(),
+                label_visibility="hidden"
             )
 
         if selected_types:
-            current_agents = step_data[agent_data['AgentType'].isin(selected_types)]
+            current_agents = step_data[step_data['AgentType'].isin(selected_types)]
         else:
             current_agents = step_data.iloc[0:0]
 
@@ -42,24 +58,8 @@ def agents(agent_data, model_data):
             grid_cols = st.columns(cols_per_row)
 
             for idx, (index, agent) in enumerate(row_agents.iterrows()):
-                is_alive = agent['IsAlive']
-                status_class = "alive-card" if is_alive else "dead-card"
-                status_text = 'ALIVE' if is_alive else 'DEAD'
-                status_label_class = "status-alive" if is_alive else "status-dead"
-
                 with grid_cols[idx]:
-                    st.markdown(f"""
-                                    <div class="agent-card {status_text}">
-                                        <span class="status-label {status_label_class}">{status_text}</span>
-                                        <div class="card-title">Agent ID: {agent['AgentID']}</div>
-                                        <div class="card-detail"><b>Type:</b> {agent['AgentType']}</div>
-                                        <div class="card-detail"><b>Health:</b> {agent['HealthPoints']:.1f}</div>
-                                        <div class="card-detail"><b>Wealth:</b> ${agent['Wealth']:.2f}</div>
-                                        <div class="card-detail"><b>Foods:</b> {agent['Foods']}</div>
-                                        <div class="card-detail"><b>Loc:</b> {agent['AgentLocation']}</div>
-                                        <div class="card-detail"><b>Action:</b> {agent['Action']}</div>
-                                    </div>
-                                """, unsafe_allow_html=True)
+                    agent_card(agent)
 
     with right_col:
         city_rows = model_data[model_data['Step'] == st.session_state.step].reset_index(drop=True)

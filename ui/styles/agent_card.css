@@ -1,0 +1,151 @@
+.agent-card {
+    --bg: rgba(255,255,255,0.65);
+    --border: rgba(0,0,0,0.08);
+    --text-main: #111827;
+    --text-muted: #6b7280;
+    --accent: #7c3aed;
+
+    backdrop-filter: blur(14px);
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 1.25rem;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    position: relative;
+    transition: 0.25s ease;
+}
+
+@media (prefers-color-scheme: dark) {
+    .agent-card {
+        --bg: rgba(17,24,39,0.65);
+        --border: rgba(255,255,255,0.08);
+        --text-main: #f9fafb;
+        --text-muted: #9ca3af;
+    }
+}
+
+.agent-card:hover {
+    transform: translateY(-2px);
+    border-color: var(--accent);
+    box-shadow: 0 20px 30px rgba(0,0,0,0.15);
+}
+
+.agent-step {
+    position: absolute;
+    top: 12px;
+    right: 14px;
+    font-size: 10px;
+    font-family: monospace;
+    color: var(--text-muted);
+}
+
+.agent-header {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    margin-bottom: 14px;
+}
+
+.agent-avatar {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: linear-gradient(135deg,#7c3aed,#ec4899);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 700;
+    font-size: 12px;
+}
+
+.agent-state-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+}
+
+.agent-state-dot.status-alive { background: linear-gradient(135deg,#10b981, #34d399); }
+.agent-state-dot.status-dead { background: linear-gradient(135deg,#ef4444, #f87171); }
+
+.agent-title {
+    font-weight: 700;
+    color: var(--text-main);
+}
+
+.agent-badge {
+    background: rgba(124,58,237,0.15);
+    color: #7c3aed;
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.agent-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 14px;
+}
+
+.stat-box {
+    background: rgba(0,0,0,0.04);
+    padding: 0.6rem;
+    border-radius: 0.75rem;
+}
+
+.stat-label {
+    font-size: 10px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+}
+
+.stat-value {
+    font-weight: 600;
+    color: var(--text-main);
+}
+
+.stat-value.status-alive { color: #009B1A; }
+
+.stat-value.status-dead { color: #A90008; }
+
+.stat-value.wealth { color: #646DEC; }
+
+.agent-inventory {
+    border-top: 1px solid var(--border);
+    padding-top: 12px;
+}
+
+.section-label {
+    font-size: 12px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+}
+
+.inventory-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+}
+
+.inv-tag {
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: rgba(0,0,0,0.05);
+    border: 1px solid var(--border);
+}
+
+.agent-action {
+    margin-top: 12px;
+    font-size: 11px;
+    font-style: italic;
+    background: rgba(124,58,237,0.12);
+    padding: 8px;
+    border-left: 3px solid #7c3aed;
+    border-radius: 6px;
+    color: var(--text-muted);
+}

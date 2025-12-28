@@ -1,6 +1,6 @@
 import streamlit as st
 
-def overview(agent_data, model_data, selected_step):
+def overview_tab(agent_data, model_data, selected_step):
 
     if 'step' not in st.session_state:
         st.session_state.step = 1
