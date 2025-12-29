@@ -31,12 +31,11 @@ class CrafterUtility:
         ):
             return 0.0
 
-        return (1.0 - self.inventory_ratio()) * (0.4 + 0.6 * self.wealth_ratio())
+        return (1.0 - self.inventory_ratio()) * (1.0 - self.inventory_pressure())
 
     def sell_utility(self):
         if (
                 not self.crafter.selling_logic.need_to_sell()
-                or self.inventory_pressure() <= 0
         ):
             return 0.0
         return self.inventory_pressure()
@@ -44,7 +43,7 @@ class CrafterUtility:
     def buy_utility(self):
         if not self.crafter.buying_logic.need_to_buy():
             return 0.0
-        return (1.0 - self.inventory_ratio()) * self.wealth_ratio()
+        return (1.0 - self.inventory_ratio()) * self.wealth_ratio() * 0.5
 
     @staticmethod
     def idle_utility() -> float:

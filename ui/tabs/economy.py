@@ -18,6 +18,10 @@ def economy_tab(model_data):
     current_row = model_data[model_data['Step'] == current_step].iloc[0]
     prev_row = model_data[model_data['Step'] == current_step - 1].iloc[0] if current_step > 1 else current_row
 
+    # Safe Parses
+    current_row['EconomyMetrics'] = safe_parse(current_row['EconomyMetrics'])
+    prev_row['EconomyMetrics'] = safe_parse(prev_row['EconomyMetrics'])
+
     header_cols = st.columns([9, 2])
 
     with header_cols[0]:
@@ -48,18 +52,62 @@ def economy_tab(model_data):
         st.divider()
 
         kpi = st.columns(4)
+
         with kpi[0]:
+            delta_value = current_row['EconomyMetrics'].get('gdp', 0.0) - prev_row['EconomyMetrics'].get('gdp', 0.0)
             st.metric(
-                "Global Wealth",
-                f"${current_row['TotalAgentWealth']:,.0f}",
-                delta=f"{current_row['TotalAgentWealth'] - prev_row['TotalAgentWealth']:,.0f}"
+                "GDP",
+                f"${current_row['EconomyMetrics'].get('gdp', 0.0):,.2f}",
+                delta=f"{delta_value:,.2f}" if delta_value != 0 else None
             )
         with kpi[1]:
-            st.metric("State Treasury", f"${current_row['Treasury']:,.0f}",
-                      delta=f"{current_row['Treasury'] - prev_row['Treasury']:,.0f}")
+            delta_value = current_row['TotalAgentWealth'] - prev_row['TotalAgentWealth']
+            st.metric(
+                "Global Wealth",
+                f"${current_row['TotalAgentWealth']:,.2f}",
+                delta=f"{delta_value:,.2f}" if delta_value != 0 else None
+            )
         with kpi[2]:
+            delta_value = current_row['EconomyWealth'] - prev_row['EconomyWealth']
+            st.metric(
+                "Economy Wealth",
+                f"${current_row['EconomyWealth']:,.2f}",
+                delta=f"{delta_value:,.2f}" if delta_value != 0 else None
+            )
+        with kpi[3]:
+            delta_value = current_row['Treasury'] - prev_row['Treasury']
+            st.metric(
+                "State Treasury",
+                f"${current_row['Treasury']:,.2f}",
+                delta=f"{delta_value:,.2f}" if delta_value != 0 else None
+            )
+
+        kpi = st.columns(4)
+
+        with kpi[0]:
+            delta_value = current_row['EconomyMetrics'].get('growth', 0.0) - prev_row['EconomyMetrics'].get('growth', 0.0)
+            grow_pct = current_row['EconomyMetrics'].get('growth', 0.0)
+            st.metric(
+                "Growth",
+                f"{grow_pct}" if abs(grow_pct) != 0.0 else "0.0",
+                delta=f"{delta_value:,.3f}" if delta_value != 0 else None
+            )
+        with kpi[1]:
+            delta_value = current_row['EconomyMetrics'].get('inflation', 0.0) - prev_row['EconomyMetrics'].get('inflation', 0.0)
+            inf_pct = current_row['EconomyMetrics'].get('inflation', 0.0)
+            st.metric(
+                "Inflation",
+                f"{inf_pct}" if abs(inf_pct) != 0.0 else "0.0",
+                delta=f"{delta_value:,.3f}" if delta_value != 0 else None
+            )
+        with kpi[2]:
+            delta_value = (current_row['TaxRate'] - prev_row['TaxRate']) * 100
             tax_pct = current_row['TaxRate'] * 100
-            st.metric("Current Tax Rate", f"{tax_pct:.1f}%", delta=None)
+            st.metric(
+                "Current Tax Rate",
+                f"{tax_pct:.2f}%" if tax_pct != 0 else "0%",
+                delta=f"{delta_value:,.2f}%" if delta_value != 0 else None
+            )
 
         st.write("")
 
@@ -75,8 +123,7 @@ def economy_tab(model_data):
             }).set_index('Step')
             st.line_chart(
                 chart_data,
-                color=["#10b981", "#3b82f6"],
-                use_container_width=True
+                color=["#10b981", "#3b82f6"]
             )
 
             st.markdown('<p class="section-label">Tax Rate</p>', unsafe_allow_html=True)
@@ -87,8 +134,7 @@ def economy_tab(model_data):
             }).set_index('Step')
             st.line_chart(
                 chart_data,
-                color="#F27F0D",
-                use_container_width=True
+                color="#F27F0D"
             )
 
         st.write("")
@@ -141,23 +187,19 @@ def economy_tab(model_data):
 
             st.markdown("</div>", unsafe_allow_html=True)
 
+
             st.markdown('<p class="section-label" style="margin-top:20px;">Supply vs Demand</p>',
                         unsafe_allow_html=True)
 
-            # Calculate ratio
             res_keys = list(resources.keys())
-            ratios = [min(100, (resources[k] / targets[k] * 100)) if targets.get(k, 0) > 0 else 0 for k in res_keys]
 
-            health_fig = px.bar(
-                x=ratios, y=[k.capitalize() for k in res_keys],
-                orientation='h', color=ratios,
-                color_continuous_scale='RdYlGn', range_color=[0, 100]
-            )
-            health_fig.update_layout(
-                margin=dict(l=0, r=0, t=0, b=0), height=200,
-                paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)',
-                xaxis=dict(title="% of Target Met", range=[0, 100]),
-                yaxis=dict(title=None),
-                coloraxis_showscale=False
-            )
-            st.plotly_chart(health_fig, use_container_width=True)
+            for k in res_keys:
+                val = resources[k]
+                target = targets.get(k, 0)
+                ratio = min(1.0, val / target) if target > 0 else 0
+
+                col1, col2 = st.columns([4, 1])
+                col1.write(f"**{k.capitalize()}**")
+                col2.write(f"{int(ratio * 100)}%")
+
+                st.progress(ratio)

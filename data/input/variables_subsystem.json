@@ -65,7 +65,9 @@
     "tax_max_rate": 0.08,
     "tax_adj_rate": 0.005,
     "tax_threshold": 10.0,
+    "target_inflation": 0.02,
 
+    "aid_per_steps": 5,
     "aid_fund":
     {
       "food": 200

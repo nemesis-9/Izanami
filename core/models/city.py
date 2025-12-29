@@ -13,6 +13,7 @@ from core.spaces.city_network import CityNetwork
 
 from core.data_collectors.reporter_model import reporter_model
 from core.data_collectors.reporter_agent import reporter_agent
+from core.data_collectors.metrics.econMetrics import EconomyMetrics
 
 from core.config.agent_config import AgentConfig
 from core.config.subsystem_config import SubsystemConfig
@@ -53,6 +54,8 @@ class CityModel(Model):
 
         self.economy = Economy(self, economy_variables)
         self.governance = Governance(self, governance_variables)
+
+        self.economy_metrics = EconomyMetrics()
 
         if model_reporters is None:
             model_reporters = reporter_model
@@ -138,6 +141,11 @@ class CityModel(Model):
 
         self.economy.step()
 
+        self.economy_metrics.update_metrics(
+            total_production=self.economy.get_total_production(),
+            current_market_price=self.economy.get_average_price()
+        )
+
         self.governance.collect_taxes()
         self.governance.fund_public_services()
 
@@ -148,7 +156,8 @@ class CityModel(Model):
             if agent.alive:
                 agent.step()
 
-        self.governance.distribute_aid()
+        if self.steps % self.governance.aid_per_steps == 0 and self.steps > 0:
+            self.governance.distribute_aid()
 
         dead_and_not_memorialized = []
         for agent in list(self.agents):  # Use list() to avoid mutation errors during iteration

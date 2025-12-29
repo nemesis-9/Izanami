@@ -40,9 +40,9 @@ st.markdown(
 
 @st.cache_data
 def load_data():
-    agent_df = pd.read_csv('data/output/phase8.1/agent_data.csv')
-    model_df = pd.read_csv('data/output/phase8.1/model_data.csv')
-    memorial_df = pd.read_csv('data/output/phase8.1/memorial_log.csv')
+    agent_df = pd.read_csv('data/output/phase8.5/agent_data.csv')
+    model_df = pd.read_csv('data/output/phase8.5/model_data.csv')
+    memorial_df = pd.read_csv('data/output/phase8.5/memorial_log.csv')
     return agent_df, model_df, memorial_df
 
 

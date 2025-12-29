@@ -20,9 +20,10 @@ class TraderUtility:
 
     def inventory_pressure(self) -> float:
         inv = self.inventory_ratio()
-        return self.clamp01(
-            inv / max(0.01, self.trader.inventory_margin)
-        )
+        margin = self.trader.inventory_margin
+        if inv <= margin:
+            return 0.0
+        return self.clamp01((inv - margin) / max(0.01, 1.0 - margin))
 
     def buy_utility(self) -> float:
         return (
@@ -34,8 +35,7 @@ class TraderUtility:
     def sell_utility(self) -> float:
         return (
             self.trader.selling_aggression
-            * self.inventory_pressure()
-            * (1.0 - self.wealth_ratio())
+            * max(self.inventory_ratio(), self.inventory_pressure())
         )
 
     def travel_utility(self) -> float:

@@ -15,8 +15,8 @@
   "trader_variables":
   {
     "max_inventory": 80,
-    "inventory_margin": 0.65,
-    "wealth_margin": 120,
+    "inventory_margin": 0.5,
+    "wealth_margin": 1000,
     "buying_aggression": 0.7,
     "selling_aggression": 1.2,
     "buying_power":
@@ -38,8 +38,8 @@
   "crafter_variables":
   {
     "max_inventory": 55,
-    "inventory_margin": 0.6,
-    "wealth_margin": 35,
+    "inventory_margin": 0.3,
+    "wealth_margin": 250,
     "high_inventory_threshold": 0.7,
     "low_wealth_threshold": 12,
     "buying_power":

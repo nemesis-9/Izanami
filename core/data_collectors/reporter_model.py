@@ -25,6 +25,8 @@ reporter_model = {
     "BasePrices": lambda m: str(getattr(m.economy, 'base_prices', {})),
     "TargetSupply": lambda m: str(getattr(m.economy, 'target_supply', {})),
 
+    "EconomyMetrics": lambda m: str(getattr(m.economy_metrics, 'current_metrics', {})),
+
     # Government
     "TotalTaxCollected": lambda m: round(m.governance.total_tax_collected, 2),
     "TotalPublicSpending": lambda m: round(m.governance.total_public_spending, 2),

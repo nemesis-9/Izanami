@@ -29,9 +29,11 @@ class Governance:
         self.tax_max_rate = governance_variables.get('tax_max_rate', 1)
         self.tax_adj_rate = governance_variables.get('tax_adj_rate', 0.01)
         self.tax_threshold = governance_variables.get('tax_threshold', 0)
+        self.target_inflation = governance_variables.get('target_inflation', 0)
 
         self.aid_fund = governance_variables.get('aid_fund', {})
         self.aid_amount = governance_variables.get('aid_amount', {})
+        self.aid_per_steps = governance_variables.get('aid_per_steps', 1)
         self.aid_max_per_agent = governance_variables.get('aid_max_per_agent', {})
         self.aid_price_margin = governance_variables.get('aid_price_margin', {})
         self.aid_threshold = governance_variables.get('aid_threshold', {})

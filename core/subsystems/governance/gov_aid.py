@@ -2,17 +2,32 @@ class GovAid:
     def __init__(self, gov):
         self.gov = gov
 
+    def transfer_aid(self, resource, amount):
+        available_amount = round(self.gov.inventory.get(resource, 0))
+        if available_amount > 0:
+            if available_amount >= amount:
+                self.gov.inventory[resource] = self.gov.inventory[resource] - amount
+                return amount
+            else:
+                self.gov.inventory[resource] = self.gov.inventory[resource] - available_amount
+                return available_amount
+        return 0
+
     def fund_aid(self):
         for resource, amount in self.gov.aid_amount.items():
+            transfer_amount = self.transfer_aid(resource, amount)
+            required_amount = amount - transfer_amount
+
             current_price = self.gov.model.economy.current_price(resource)
             aid_price = round(current_price * self.gov.aid_price_margin.get(resource, 1.0), 3)
 
-            received_amount = self.gov.model.economy.request_resource(resource, amount)
+            received_amount = self.gov.model.economy.request_resource(resource, required_amount)
             cost = round(aid_price * received_amount, 3)
 
             self.gov.treasury -= cost
             self.gov.model.economy.wealth += cost
-            self.gov.aid_fund[resource] = self.gov.aid_fund.get(resource, 0) + received_amount
+
+            self.gov.aid_fund[resource] = self.gov.aid_fund.get(resource, 0) + transfer_amount + received_amount
             self.gov.total_public_spending += cost
 
     def distribute_aid(self):

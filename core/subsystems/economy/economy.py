@@ -39,7 +39,19 @@ class Economy:
     def current_price(self, resource):
         return self.price_pools.get(resource, 0)
 
+    def get_total_production(self):
+        total_value = 0.0
+        for resource, quantity in self.resource_pools.items():
+            price = self.price_pools.get(resource, 0)
+            total_value += quantity * price
+        return total_value
+
+    def get_average_price(self):
+        if not self.price_pools:
+            return 0.0
+        total_price = sum(self.price_pools.values())
+        return total_price / len(self.price_pools)
+
     def step(self):
         for resource in self.resource_pools.keys():
             self.calculate_price(resource)
-        pass
